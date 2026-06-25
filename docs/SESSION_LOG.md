@@ -8,8 +8,8 @@ Secure cloud-based dashboard for pathology image analysis. MRP project connected
 
 ## Repo State (as of 2026-06-25)
 - Git repo initialized at project root, connected to `https://github.com/satvikkaul/secure-pathology-dashboard.git`
-- Nothing has been committed yet
-- Working tree has all changes unstaged
+- **Backend committed.** All backend source files, docs, and `.gitignore` are in the initial commit.
+- **Frontend not yet committed.** `frontend/` and `docs/FRONTEND_PLAN.md` are untracked pending final smoke test and commit.
 
 ## Backend Files Created
 ```
@@ -90,10 +90,60 @@ All backend endpoints verified working via curl:
 - User B `GET /images/1` (User A's image) → `404` "Image not found"
 - User B `GET /jobs/1` (User A's job) → `404` "Job not found"
 
-**Backend is fully verified. Ready for first git commit, then frontend.**
+**Backend is fully verified and committed.**
+
+## Frontend Implementation Status (as of 2026-06-25)
+Phase 1 frontend is complete. All seven steps implemented and manually tested.
+
+**Tech stack:** React + Vite · react-router-dom v6 · native fetch · localStorage JWT (Phase 1)
+
+**Frontend file tree:**
+```
+frontend/
+├── index.html
+├── vite.config.js          — proxy /api/* → VITE_BACKEND_URL (default localhost:8000)
+├── .env.example            — VITE_API_BASE_URL, VITE_BACKEND_URL
+├── package.json
+└── src/
+    ├── main.jsx
+    ├── App.jsx             — BrowserRouter + AuthProvider + all routes
+    ├── api/
+    │   ├── client.js       — fetch wrapper: Bearer token injection, 401 handling,
+    │   │                     extractDetail() normalises Pydantic array errors to string
+    │   ├── auth.js         — register(), login(), getMe()
+    │   ├── images.js       — listImages(), uploadImage(file)
+    │   ├── algorithms.js   — listAlgorithms()
+    │   └── jobs.js         — listJobs(), submitJob(), getJob()
+    ├── context/
+    │   └── AuthContext.jsx — token/user state, isLoading, login(), logout()
+    ├── components/
+    │   └── ProtectedRoute.jsx
+    └── pages/
+        ├── LoginPage.jsx
+        ├── RegisterPage.jsx
+        ├── DashboardPage.jsx
+        ├── UploadPage.jsx
+        └── JobResultPage.jsx
+```
+
+**Manually tested flows:**
+- Register new user → success banner on /login
+- Login → JWT in localStorage → /dashboard with full_name
+- Dashboard: image list, job list, empty states, logout
+- Logout clears token, redirects to /login
+- Refresh on /dashboard while authenticated stays on dashboard (AuthContext re-validates token)
+- Upload valid JPG/PNG → algorithm dropdown → job creation → redirect to /jobs/:id
+- Job result page: parsed prediction, confidence %, findings list, disclaimer
+- Invalid file type (PDF): caught client-side, no request sent
+- File over 10 MB: caught client-side, no request sent
+- Invalid email on register: shows readable Pydantic validation message (not [object Object])
+- Duplicate email on register: shows "Email already registered"
+- Wrong password on login: shows "Incorrect email or password"
+- Cross-user job access: User B GET /jobs/1 (User A's) → "Job not found"
+- Dashboard job links navigate to correct /jobs/:id
 
 ## Current Unresolved Issues
-None. All known backend bugs are resolved.
+None. Phase 1 is feature-complete and verified.
 
 ## Known Backend Issues from Code Review (resolved)
 1. **Full file buffered before size check** — FIXED (streaming now)
