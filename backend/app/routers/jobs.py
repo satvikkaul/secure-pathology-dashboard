@@ -1,10 +1,13 @@
 import json
+import logging
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..dependencies import get_current_user, get_db
 from ..algorithms.placeholder import run as run_placeholder
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
@@ -45,8 +48,16 @@ def submit_job(
         job.status = "completed"
         job.result_summary = json.dumps(result)
         job.completed_at = datetime.now(timezone.utc)
-    except Exception:
+    except Exception as exc:
+        logger.error(
+            "Algorithm %s failed for job %d: %s",
+            payload.algorithm_name,
+            job.id,
+            exc,
+            exc_info=True,
+        )
         job.status = "failed"
+        job.result_summary = json.dumps({"error": "Algorithm execution failed. See server logs for details."})
         job.completed_at = datetime.now(timezone.utc)
 
     db.commit()

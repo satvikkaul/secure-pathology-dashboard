@@ -1,20 +1,68 @@
+import io
+import logging
 import os
 import uuid
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from PIL import Image as PILImage
 from sqlalchemy.orm import Session
+
 from .. import models, schemas
 from ..dependencies import get_current_user, get_db
 
+logger = logging.getLogger(__name__)
+
 ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png"}
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
+ALLOWED_PIL_FORMATS = {"JPEG", "PNG"}
+_CHUNK_SIZE = 64 * 1024  # 64 KB per read call
+
+# Resolve upload dir relative to backend/ so the path is stable regardless of
+# the working directory uvicorn is launched from.
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
 
 router = APIRouter(prefix="/images", tags=["images"])
 
 
-def _get_upload_dir() -> str:
-    path = os.getenv("UPLOAD_DIR", "uploads")
-    os.makedirs(path, exist_ok=True)
+def _get_upload_dir() -> Path:
+    raw = os.getenv("UPLOAD_DIR", "uploads")
+    path = Path(raw)
+    if not path.is_absolute():
+        path = _BACKEND_DIR / path
+    path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+async def _read_upload(file: UploadFile, max_bytes: int) -> bytes:
+    """Stream file in chunks, rejecting as soon as the size limit is exceeded."""
+    chunks: list[bytes] = []
+    total = 0
+    while True:
+        chunk = await file.read(_CHUNK_SIZE)
+        if not chunk:
+            break
+        total += len(chunk)
+        if total > max_bytes:
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail=f"File exceeds the {max_bytes // (1024 * 1024)} MB size limit",
+            )
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
+def _verify_image(contents: bytes) -> None:
+    """Confirm bytes decode as a valid JPEG or PNG using Pillow."""
+    try:
+        img = PILImage.open(io.BytesIO(contents))
+        if img.format not in ALLOWED_PIL_FORMATS:
+            raise HTTPException(status_code=422, detail="File is not a valid JPG or PNG image")
+        img.verify()  # detects truncation and corruption
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=422, detail="File is not a valid JPG or PNG image")
 
 
 @router.post("/", response_model=schemas.ImageOut, status_code=status.HTTP_201_CREATED)
@@ -27,15 +75,14 @@ async def upload_image(
     if file.content_type not in ALLOWED_CONTENT_TYPES or ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(status_code=422, detail="Only JPG and PNG files are accepted")
 
-    contents = await file.read()
-    max_bytes = int(os.getenv("MAX_UPLOAD_SIZE_MB", "50")) * 1024 * 1024
-    if len(contents) > max_bytes:
-        raise HTTPException(status_code=413, detail="File exceeds maximum allowed size")
+    max_bytes = int(os.getenv("MAX_UPLOAD_SIZE_MB", "10")) * 1024 * 1024
+    contents = await _read_upload(file, max_bytes)
+
+    _verify_image(contents)
 
     stored_name = f"{uuid.uuid4()}{ext}"
-    dest = os.path.join(_get_upload_dir(), stored_name)
-    with open(dest, "wb") as f:
-        f.write(contents)
+    dest = _get_upload_dir() / stored_name
+    dest.write_bytes(contents)
 
     image = models.Image(
         owner_id=current_user.id,
@@ -44,8 +91,13 @@ async def upload_image(
         file_size=len(contents),
     )
     db.add(image)
-    db.commit()
-    db.refresh(image)
+    try:
+        db.commit()
+        db.refresh(image)
+    except Exception:
+        db.rollback()
+        dest.unlink(missing_ok=True)
+        raise HTTPException(status_code=500, detail="Upload failed. Please try again.")
     return image
 
 

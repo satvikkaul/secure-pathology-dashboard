@@ -1,11 +1,31 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class UserCreate(BaseModel):
+    full_name: str = Field(min_length=1, max_length=100)
     email: EmailStr
-    password: str
+    password: str = Field(min_length=8)
+
+    @field_validator("password")
+    @classmethod
+    def password_max_bytes(cls, v: str) -> str:
+        if len(v.encode("utf-8")) > 72:
+            raise ValueError("Password must not exceed 72 bytes (bcrypt limit)")
+        return v
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8)
+
+    @field_validator("password")
+    @classmethod
+    def password_max_bytes(cls, v: str) -> str:
+        if len(v.encode("utf-8")) > 72:
+            raise ValueError("Password must not exceed 72 bytes (bcrypt limit)")
+        return v
 
 
 class Token(BaseModel):
@@ -15,6 +35,7 @@ class Token(BaseModel):
 
 class UserOut(BaseModel):
     id: int
+    full_name: str
     email: str
     created_at: datetime
 
