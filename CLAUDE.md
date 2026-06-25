@@ -44,3 +44,11 @@ Before starting any work, read:
 4. Private result access
 5. Secrets management
 6. Minimal logging of sensitive data
+
+
+## Git Safety Rules
+
+Before any commit:
+- Run git status --short.
+- Confirm no .env, database, virtual environment, cache, uploaded image, or node_modules files are included.
+- Do not commit or push unless explicitly instructed.

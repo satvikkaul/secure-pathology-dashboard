@@ -62,7 +62,35 @@ All three auth endpoints verified working in Swagger:
 - `POST /auth/login` → `200` with `access_token`
 - `GET /auth/me` → `200` with `full_name` using Bearer token
 
-**Backend auth is complete. Frontend has not been started.**
+## Full Backend Verification Status (as of 2026-06-25)
+All backend endpoints verified working via curl:
+
+**Auth**
+- `POST /auth/register` → `201` with `id`, `full_name`, `email`, `created_at`
+- `POST /auth/login` → `200` with `access_token`
+- `GET /auth/me` → `200` with `full_name` using Bearer token
+
+**Algorithms**
+- `GET /algorithms/` → `200` returns `placeholder_v1` with `display_name`, `description`, `version`
+
+**Images**
+- `POST /images/` (valid JPG) → `201` with `id`, `content_type`, `file_size`
+- `POST /images/` (PDF) → `422` "Only JPG and PNG files are accepted"
+- `POST /images/` (text file renamed .jpg) → `422` "File is not a valid JPG or PNG image"
+- `POST /images/` (11 MB file) → `413` "File exceeds the 10 MB size limit"
+
+**Jobs**
+- `POST /jobs/` `{"image_id": 1, "algorithm_name": "placeholder_v1"}` → `201` with `status: "completed"` and `result_summary` populated (synthetic prediction: benign, confidence: 0.87)
+- `GET /jobs/` → `200` returns list with the submitted job
+- `GET /jobs/{id}` → `200` returns full job details including `result_summary`
+
+**Per-user data isolation**
+- User B `GET /images/` → `[]` (empty, cannot see User A's images)
+- User B `GET /jobs/` → `[]` (empty, cannot see User A's jobs)
+- User B `GET /images/1` (User A's image) → `404` "Image not found"
+- User B `GET /jobs/1` (User A's job) → `404` "Job not found"
+
+**Backend is fully verified. Ready for first git commit, then frontend.**
 
 ## Current Unresolved Issues
 None. All known backend bugs are resolved.
