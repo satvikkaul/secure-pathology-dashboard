@@ -3,6 +3,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { listImages } from '../api/images'
 import { listJobs } from '../api/jobs'
+import './DashboardPage.css'
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
 
 function DashboardPage() {
   const { user, logout } = useAuth()
@@ -29,53 +36,88 @@ function DashboardPage() {
   }
 
   return (
-    <div>
-      <div>
-        <h1>Welcome, {user?.full_name}</h1>
-        <button type="button" onClick={handleLogout}>Log out</button>
+    <div className="dash-page">
+      <header className="dash-header">
+        <span className="dash-brand">Secure Pathology Dashboard</span>
+        <button type="button" className="dash-logout" onClick={handleLogout}>
+          Log out
+        </button>
+      </header>
+
+      <div className="dash-body">
+        <div className="dash-welcome">
+          <div>
+            <h1 className="dash-welcome-name">Welcome, {user?.full_name}</h1>
+            <p className="dash-welcome-sub">Phase 1 Research Prototype</p>
+          </div>
+          <Link to="/upload" className="dash-upload-btn">Upload Image</Link>
+        </div>
+
+        {isLoading && <p className="dash-loading">Loading…</p>}
+        {error && <p className="dash-error" role="alert">{error}</p>}
+
+        {!isLoading && !error && (
+          <div className="dash-grid">
+            <section className="dash-card">
+              <div className="dash-card-header">
+                <h2 className="dash-card-title">Images</h2>
+                {images.length > 0 && (
+                  <span className="dash-card-count">{images.length}</span>
+                )}
+              </div>
+              {images.length === 0 ? (
+                <p className="dash-empty">No images uploaded yet.</p>
+              ) : (
+                <ul className="dash-list">
+                  {images.map((img) => (
+                    <li key={img.id} className="dash-list-item">
+                      <span className="dash-item-id">Image #{img.id}</span>
+                      <span className="dash-item-meta">
+                        {img.content_type} · {formatBytes(img.file_size)} ·{' '}
+                        {new Date(img.created_at).toLocaleDateString()}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            <section className="dash-card">
+              <div className="dash-card-header">
+                <h2 className="dash-card-title">Analysis Jobs</h2>
+                {jobs.length > 0 && (
+                  <span className="dash-card-count">{jobs.length}</span>
+                )}
+              </div>
+              {jobs.length === 0 ? (
+                <p className="dash-empty">No jobs run yet.</p>
+              ) : (
+                <ul className="dash-list">
+                  {jobs.map((job) => (
+                    <li key={job.id} className="dash-list-item">
+                      <div className="dash-job-top">
+                        <Link to={`/jobs/${job.id}`} className="dash-job-link">
+                          Job #{job.id}
+                        </Link>
+                        <span className={`dash-badge dash-badge--${job.status}`}>
+                          {job.status}
+                        </span>
+                      </div>
+                      <span className="dash-item-meta">
+                        {job.algorithm_name} · {new Date(job.created_at).toLocaleDateString()}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
+        )}
       </div>
 
-      <p><Link to="/upload">Upload new image</Link></p>
-
-      {isLoading && <p>Loading…</p>}
-      {error && <p role="alert">{error}</p>}
-
-      {!isLoading && !error && (
-        <>
-          <section>
-            <h2>Uploaded images</h2>
-            {images.length === 0 ? (
-              <p>No images uploaded yet.</p>
-            ) : (
-              <ul>
-                {images.map((img) => (
-                  <li key={img.id}>
-                    Image #{img.id} &middot; {img.content_type} &middot; {img.file_size} B &middot;{' '}
-                    {new Date(img.created_at).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
-          <section>
-            <h2>Jobs</h2>
-            {jobs.length === 0 ? (
-              <p>No jobs run yet.</p>
-            ) : (
-              <ul>
-                {jobs.map((job) => (
-                  <li key={job.id}>
-                    <Link to={`/jobs/${job.id}`}>Job #{job.id}</Link>{' '}
-                    &middot; {job.algorithm_name} &middot; {job.status} &middot;{' '}
-                    {new Date(job.created_at).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        </>
-      )}
+      <footer className="dash-footer">
+        Prototype only — not for clinical use
+      </footer>
     </div>
   )
 }

@@ -8,6 +8,17 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  // Any API call that gets a 401 dispatches this event. Clear state so
+  // ProtectedRoute redirects to /login without needing a page refresh.
+  useEffect(() => {
+    function handleUnauthorized() {
+      setToken(null)
+      setUser(null)
+    }
+    window.addEventListener('auth:unauthorized', handleUnauthorized)
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized)
+  }, [])
+
   // On mount: validate any existing token by calling /auth/me.
   // If it fails the token is stale — clear it so ProtectedRoute redirects correctly.
   useEffect(() => {

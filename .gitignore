@@ -2,14 +2,18 @@
 __pycache__/
 *.pyc
 *.pyo
+venv/
+.venv/
 backend/venv/
 *.egg-info/
 dist/
 build/
 
-# Environment
+# Environment — never commit real secrets
 .env
 .env.local
+backend/.env
+frontend/.env
 
 # Database
 *.db
@@ -19,15 +23,12 @@ build/
 backend/uploads/*
 !backend/uploads/.gitkeep
 
-
-# Node / frontend (Phase 2)
+# Node / frontend
 node_modules/
-dist/
+frontend/node_modules/
 
 # IDE / OS
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
-
-.claude

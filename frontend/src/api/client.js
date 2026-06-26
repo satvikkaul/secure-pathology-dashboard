@@ -29,6 +29,7 @@ async function request(path, options = {}) {
 
   if (response.status === 401) {
     localStorage.removeItem('token')
+    window.dispatchEvent(new Event('auth:unauthorized'))
     throw new Error('Unauthorized')
   }
 

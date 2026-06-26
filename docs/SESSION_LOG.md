@@ -8,8 +8,42 @@ Secure cloud-based dashboard for pathology image analysis. MRP project connected
 
 ## Repo State (as of 2026-06-25)
 - Git repo initialized at project root, connected to `https://github.com/satvikkaul/secure-pathology-dashboard.git`
-- **Backend committed.** All backend source files, docs, and `.gitignore` are in the initial commit.
-- **Frontend not yet committed.** `frontend/` and `docs/FRONTEND_PLAN.md` are untracked pending final smoke test and commit.
+- **Uncommitted changes present** — Codex review fixes and UI polish are complete but not yet committed. Working tree is dirty (see "Codex Review Fixes" and "UI Polish" sections below). Next step: review diff, then commit.
+- Commit history (latest first):
+  - `4773a23` — feat: complete phase 1 dashboard prototype
+  - `b8edcd2` — feat: scaffold verified phase 1 backend prototype
+  - `c5777f6` — feat: scaffold phase 1 backend prototype
+
+## Codex Review Fixes (2026-06-25)
+
+1. **401 in-memory logout** — Fixed and verified. `client.js` dispatches `auth:unauthorized` on 401; `AuthContext` listens and clears `token`/`user` state; `ProtectedRoute` redirects to `/login` without a page reload. Playwright-verified end-to-end.
+2. **SECRET_KEY fallback removed** — `backend/app/auth.py` no longer accepts a hard-coded fallback. Server raises `RuntimeError` on startup if `SECRET_KEY` is missing or still set to the placeholder value.
+3. **.gitignore fixed** — Removed erroneous `docs/` and `.claude/` exclusions (both are intentional project files). Added explicit entries for `backend/.env`, `frontend/.env`, `venv/`, `.venv/`, and `frontend/node_modules/`.
+4. **`backend/.env.example` updated** — Placeholder value replaced with `REPLACE_THIS_WITH_A_REAL_SECRET`; added generation instruction (`secrets.token_hex(32)`).
+5. **CLAUDE.md updated** — Removed stale "No frontend yet" constraint; updated to reflect Phase 1 complete status and current focus.
+
+## UI Polish (2026-06-25)
+
+LoginPage, RegisterPage, and DashboardPage restyled with plain CSS. No new dependencies, no Tailwind, no external fonts or image assets.
+
+**Files changed:**
+- `frontend/src/index.css` — full rewrite; design token CSS variables (slate/blue palette); `#root` stripped of Vite's bordered-column constraint; global font/color/link resets
+- `frontend/src/App.css` — cleared; Vite boilerplate removed (file was not imported anywhere)
+- `frontend/src/pages/auth.css` — **new**; shared card, input, button, error/banner, and notice styles used by both LoginPage and RegisterPage
+- `frontend/src/pages/LoginPage.jsx` — restyled with auth classes; "Research Prototype" subtitle; "No account? Create one" footer link; no "Forgot password" link; "Prototype only — not for clinical use" notice
+- `frontend/src/pages/RegisterPage.jsx` — restyled with auth classes; "Create Account" subtitle; "Minimum 8 characters" password hint (corrects mockup's incorrect "12 characters"); notice present
+- `frontend/src/pages/DashboardPage.jsx` — header bar with brand + logout; welcome with `full_name` + "Phase 1 Research Prototype" sub; two-column card grid (Images + Analysis Jobs); `formatBytes` helper; status badges per job; prototype footer
+- `frontend/src/pages/DashboardPage.css` — **new**; dashboard-specific layout: header, body, welcome bar, two-column grid, cards, list rows, job badges, footer
+
+**Playwright-verified (29 checks, all pass):**
+- Auth cards render correctly on login and register
+- Titles, subtitles, notices, and password hint are accurate
+- No "Forgot password", "Register for Trial", "Clinical Trial", "Professional Email", or "12 characters" anywhere
+- Registration → success banner on /login → login → /dashboard flow intact
+- Dashboard brand, welcome name, two cards, upload button, logout all present
+- Wrong password / short password / mismatched passwords: all correctly blocked
+- Upload Image link navigates to /upload
+- Logout redirects to /login; ProtectedRoute blocks /dashboard after logout
 
 ## Backend Files Created
 ```

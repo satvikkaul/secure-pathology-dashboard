@@ -22,14 +22,24 @@ Before starting any work, read:
 - Prefer small, reviewable changes.
 - Explain architectural tradeoffs clearly.
 
-## Phase 1 Constraints (do not add until Phase 1 backend is verified)
-- No frontend yet — backend must be verified in Swagger first.
-- No cloud deployment.
-- No real patient data.
-- No Celery, Redis, Docker, or real AI.
-- No admin roles or dashboards.
-- No WSI image support.
-- No formal compliance claims.
+## Phase 1 Status
+Phase 1 backend and frontend are fully implemented and verified.
+
+- Backend: all endpoints verified via curl (auth, images, algorithms, jobs, per-user isolation).
+- Frontend: all flows verified in browser (register, login, upload, job result, 401 logout, cross-user blocking).
+- Current focus: repo cleanup, README/demo polish, presentation readiness.
+
+## Out of Scope (do not add)
+- Cloud deployment (AWS Canada / Azure Canada)
+- Real or de-identified patient data / REB approval
+- Admin roles or admin dashboards
+- Real algorithm integration (Gleason grading, etc.)
+- Job queues (Celery, Redis)
+- Dockerized algorithm containers
+- WSI image format support
+- httpOnly secure cookies / MFA / SSO
+- File download functionality
+- Formal HIPAA / PIPEDA / PHIPA compliance certification
 
 ## Coding Style
 - Build incrementally.

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { login as apiLogin } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
+import './auth.css'
 
 function LoginPage() {
   const { login } = useAuth()
@@ -30,40 +31,58 @@ function LoginPage() {
   }
 
   return (
-    <div>
-      <h1>Sign in</h1>
-      {justRegistered && <p>Account created. Sign in to continue.</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="email"
-          />
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h1 className="auth-title">Secure Pathology Dashboard</h1>
+          <p className="auth-subtitle">Research Prototype</p>
         </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoComplete="current-password"
-          />
-        </div>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Signing in…' : 'Sign in'}
-        </button>
-      </form>
-      <p>
-        No account? <Link to="/register">Register</Link>
-      </p>
+
+        {justRegistered && (
+          <p className="auth-banner">Account created. Sign in to continue.</p>
+        )}
+        {error && <p className="auth-error" role="alert">{error}</p>}
+
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="email">Email</label>
+            <input
+              className="auth-input"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              placeholder="you@institution.edu"
+            />
+          </div>
+
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="password">Password</label>
+            <input
+              className="auth-input"
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <button className="auth-btn" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Signing in…' : 'Sign In'}
+          </button>
+        </form>
+
+        <p className="auth-footer">
+          No account? <Link to="/register">Create one</Link>
+        </p>
+      </div>
+
+      <p className="auth-notice">Prototype only — not for clinical use</p>
     </div>
   )
 }
