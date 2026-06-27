@@ -1,8 +1,9 @@
 # Next Steps
 
 ## Current Status
-**Phase 1 prototype is feature-complete, visually polished across all pages, build-verified, and Playwright-verified.**
-Working tree has **3 uncommitted docs files** (this file + SESSION_LOG.md + FRONTEND_PLAN.md). HEAD is `0b1e51d` on `main`; `origin/main` is at `ce1f853`.
+**Phase 1 prototype is feature-complete, polished, and build-verified. UI Polish Session 3 work is uncommitted.**
+HEAD is `68b9933` on `main`; `origin/main` is at `ce1f853`.
+Working tree has 5 modified source files + 3 new untracked files (see SESSION_LOG.md).
 Repo is at `https://github.com/satvikkaul/secure-pathology-dashboard`.
 
 To start the backend (requires a real `SECRET_KEY` in `backend/.env`):
@@ -22,20 +23,40 @@ npm run dev
 
 ---
 
-## Immediate Next Task: Commit docs update
+## Immediate Next Task: Manual verify then commit
 
-Stage and commit the three modified docs files:
+**Step 1 — Manual browser verification** (run `npm run dev` + `uvicorn`):
+- [ ] Sidebar present on Dashboard, Upload, Jobs list, Job result pages
+- [ ] Sidebar toggle (`‹`/`›`) is inside the sidebar brand area, not in the topbar
+- [ ] `/jobs` empty state renders; "Upload Image" button navigates to `/upload`
+- [ ] `/jobs` with jobs shows list; "View Result →" links to `/jobs/:id`
+- [ ] Active nav state correct: Dashboard active on `/dashboard`, Upload Image active on `/upload`, Analysis Jobs active on `/jobs` and `/jobs/:id`
+- [ ] Sign Out from sidebar footer works on all pages
+- [ ] Mobile drawer still works (☰ in topbar, overlay closes drawer)
 
+**Step 2 — Commit source changes:**
+```bash
+git add frontend/src/App.jsx \
+        frontend/src/components/AppLayout.jsx \
+        frontend/src/pages/DashboardPage.css \
+        frontend/src/pages/DashboardPage.jsx \
+        frontend/src/pages/JobResultPage.jsx \
+        frontend/src/pages/JobsPage.css \
+        frontend/src/pages/JobsPage.jsx \
+        frontend/src/pages/UploadPage.jsx
 ```
-docs/FRONTEND_PLAN.md
-docs/NEXT_STEPS.md
-docs/SESSION_LOG.md
-```
-
 Suggested message:
-
 ```
-docs: update session log and next steps after Playwright verification
+feat: add shared AppLayout, sidebar polish, and Analysis Jobs page
+```
+
+**Step 3 — Commit docs:**
+```bash
+git add docs/FRONTEND_PLAN.md docs/NEXT_STEPS.md docs/SESSION_LOG.md
+```
+Suggested message:
+```
+docs: update session log and next steps for UI Polish Session 3
 ```
 
 ---
@@ -44,13 +65,16 @@ docs: update session log and next steps after Playwright verification
 
 | Task | Status | Notes |
 |---|---|---|
-| **Dashboard sidebar** | Done + verified ✓ | Playwright 41/41 pass |
+| **Sidebar toggle inside sidebar** | Done, not yet verified | Build clean; needs browser check |
+| **Sidebar persistent across all pages** | Done, not yet verified | AppLayout shared component |
+| **Analysis Jobs page (`/jobs`)** | Done, not yet verified | JobsPage.jsx + JobsPage.css |
+| **Dashboard sidebar (original)** | Done + verified ✓ | Playwright 41/41 pass (commit `0b1e51d`) |
 | **UploadPage UI** | Done + verified ✓ | Playwright 41/41 pass |
 | **JobResultPage UI** | Done + verified ✓ | Playwright 41/41 pass |
 | **README rewrite** | Not started | Replace Vite boilerplate; cover setup, Phase 1 scope, what's demonstrated |
 | **Demo script** | Not started | Step-by-step: register → login → upload → job → result → logout |
 | **Professor update email** | Not started | Phase 1 summary: built, verified, deferred |
-| **Screenshots** | Not started | Login, register, dashboard, upload, job result — for README + email |
+| **Screenshots** | Not started | Login, register, dashboard, upload, jobs list, job result — for README + email |
 
 ---
 
@@ -70,6 +94,12 @@ docs: update session log and next steps after Playwright verification
 - Dashboard sidebar: collapse/expand, mobile burger + overlay, Sign Out, profile chip initials
 - UploadPage: step indicators, drop zone, algorithm lock/unlock, file preview, Remove + same-file reselect, submit → /jobs/:id
 - JobResultPage: two-column layout, metric grid, findings card, prototype notice (amber), image summary in aside
+
+**UI Polish Session 3 — build-verified only, browser/Playwright verification pending:**
+- Sidebar toggle inside sidebar brand area (not topbar)
+- Sidebar persistent on Dashboard, Upload, Job Result, Jobs list pages
+- `/jobs` list page: empty state, job rows, "View Result →" links, status badges
+- Active nav state: dynamic via `useLocation()`, correct per route
 
 ---
 

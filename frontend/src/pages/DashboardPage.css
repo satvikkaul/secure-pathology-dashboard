@@ -326,6 +326,7 @@
 }
 
 .sb-title-block {
+  flex: 1;
   min-width: 0;
 }
 
@@ -345,6 +346,35 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ── Sidebar collapse toggle (desktop only, lives inside sb-brand) ────────── */
+.sb-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  background: transparent;
+  font-size: 14px;
+  color: var(--c-text-lo);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+}
+
+@media (min-width: 1024px) {
+  .sb-toggle {
+    display: flex;
+  }
+}
+
+.sb-toggle:hover {
+  background: var(--c-surface-lo);
+  color: var(--c-text-hi);
 }
 
 /* ── Nav ──────────────────────────────────────────────────────────────────── */
@@ -470,8 +500,11 @@
   }
 
   .dash-sidebar--collapsed .sb-brand {
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    padding: 18px 8px;
+    padding: 14px 8px;
+    gap: 8px;
   }
 
   .dash-sidebar--collapsed .sb-nav-wrap {
@@ -557,11 +590,9 @@
 }
 
 .dash-burger--mobile { display: flex; }
-.dash-burger--desktop { display: none; }
 
 @media (min-width: 1024px) {
   .dash-burger--mobile { display: none; }
-  .dash-burger--desktop { display: flex; }
 }
 
 .dash-topbar-title {

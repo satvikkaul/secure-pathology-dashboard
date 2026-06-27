@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import UploadPage from './pages/UploadPage'
+import JobsPage from './pages/JobsPage'
 import JobResultPage from './pages/JobResultPage'
 
 function App() {
@@ -21,6 +22,10 @@ function App() {
           <Route
             path="/upload"
             element={<ProtectedRoute><UploadPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/jobs"
+            element={<ProtectedRoute><JobsPage /></ProtectedRoute>}
           />
           <Route
             path="/jobs/:id"

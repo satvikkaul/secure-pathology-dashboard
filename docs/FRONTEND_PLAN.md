@@ -42,18 +42,21 @@ frontend/
     │   └── AuthContext.jsx ← user + token state, login(), logout()
     │
     ├── components/
-    │   └── ProtectedRoute.jsx  ← redirects to /login if no token in localStorage
+    │   ├── ProtectedRoute.jsx  ← redirects to /login if no token in localStorage
+    │   └── AppLayout.jsx       ← shared sidebar + topbar + footer shell for all auth pages
     │
     └── pages/
         ├── auth.css            ← shared card/input/button styles (Login + Register)
         ├── LoginPage.jsx
         ├── RegisterPage.jsx
-        ├── DashboardPage.css   ← dashboard + sidebar/topbar + shared header classes
-        ├── DashboardPage.jsx   ← sidebar layout (dash-app shell)
+        ├── DashboardPage.css   ← sidebar/topbar/shell CSS + shared dash-* classes
+        ├── DashboardPage.jsx   ← uses AppLayout; renders dash-body with image + job cards
         ├── UploadPage.css      ← upload page layout, drop zone, step indicators
-        ├── UploadPage.jsx
+        ├── UploadPage.jsx      ← uses AppLayout; drag-drop upload + algorithm select
         ├── JobResultPage.css   ← report layout, metrics, aside cards
-        └── JobResultPage.jsx
+        ├── JobResultPage.jsx   ← uses AppLayout; report display for a single job
+        ├── JobsPage.css        ← jobs list layout (jl-* prefix)
+        └── JobsPage.jsx        ← uses AppLayout; lists all jobs, links completed to /jobs/:id
 ```
 
 ---
@@ -66,6 +69,7 @@ frontend/
 | `/register` | RegisterPage | No |
 | `/dashboard` | DashboardPage | Yes |
 | `/upload` | UploadPage | Yes |
+| `/jobs` | JobsPage | Yes |
 | `/jobs/:id` | JobResultPage | Yes |
 | `/` | Redirect → `/dashboard` | — |
 
@@ -81,7 +85,7 @@ The Vite proxy (`/api → localhost:8000`) means all frontend fetch calls use re
 
 ## Implementation Order
 
-All steps complete and Playwright-verified (41/41 checks, 2026-06-27).
+Steps 1–7 complete and Playwright-verified (41/41 checks, commit `0b1e51d`). Session 3 additions build-verified; browser verification pending.
 
 | Step | What gets built | Status |
 |---|---|---|
@@ -95,10 +99,17 @@ All steps complete and Playwright-verified (41/41 checks, 2026-06-27).
 
 **Beyond original plan (added and verified):**
 - Collapsible sidebar on DashboardPage (256px expanded / 72px collapsed on desktop; mobile drawer)
-- Profile chip (initials + name) in dashboard topbar
+- Profile chip (initials + name) in topbar
 - Drag-and-drop file zone on UploadPage with step indicator progression
 - `getImage(id)` added to images.js for image summary in JobResultPage aside
 - 5 color tokens added to index.css (`--c-secondary`, `--c-success`, `--c-success-bg`, `--c-warning`, `--c-warning-bg`)
+
+**UI Polish Session 3 additions (build-verified, browser verification pending):**
+- `AppLayout.jsx` — shared layout component; sidebar persistent across all authenticated pages
+- Sidebar toggle button moved inside sidebar brand area; removed from topbar
+- `JobsPage.jsx` / `JobsPage.css` — new `/jobs` route; full job history list with status badges and result links
+- `App.jsx` — `/jobs` route added (protected), above `/jobs/:id`
+- Active nav state now computed dynamically via `useLocation()` in AppLayout
 
 ---
 

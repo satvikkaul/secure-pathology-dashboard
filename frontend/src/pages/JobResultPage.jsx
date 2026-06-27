@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { getJob } from '../api/jobs'
 import { getImage } from '../api/images'
-import './DashboardPage.css'
+import AppLayout from '../components/AppLayout'
 import './JobResultPage.css'
 
 function formatBytes(bytes) {
@@ -53,48 +53,7 @@ function JobResultPage() {
     : 'jr-status-badge'
 
   return (
-    <div className="dash-page">
-      <header className="dash-header">
-        <div>
-          <div className="dash-brand">Secure Pathology Dashboard</div>
-          <div style={{ fontSize: '12px', color: 'var(--c-text-lo)', marginTop: '2px' }}>
-            Phase 1 Research Prototype
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <Link
-            to="/dashboard"
-            style={{
-              padding: '7px 14px',
-              fontSize: '13px',
-              fontWeight: 600,
-              color: 'var(--c-text)',
-              background: 'var(--c-surface-lo)',
-              border: '1px solid var(--c-border)',
-              borderRadius: '8px',
-              textDecoration: 'none',
-            }}
-          >
-            Back to Dashboard
-          </Link>
-          <Link
-            to="/upload"
-            style={{
-              padding: '7px 14px',
-              fontSize: '13px',
-              fontWeight: 600,
-              color: '#fff',
-              background: 'var(--c-navy)',
-              border: '1px solid var(--c-navy)',
-              borderRadius: '8px',
-              textDecoration: 'none',
-            }}
-          >
-            Run Another Upload
-          </Link>
-        </div>
-      </header>
-
+    <AppLayout pageTitle="Analysis Result" pageSub="Generated report">
       <main className="jr-body">
         {isLoading && <p className="jr-loading">Loading…</p>}
         {error && <p className="jr-error" role="alert">{error}</p>}
@@ -281,7 +240,7 @@ function JobResultPage() {
           </>
         )}
       </main>
-    </div>
+    </AppLayout>
   )
 }
 

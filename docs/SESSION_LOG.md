@@ -8,13 +8,25 @@ Secure cloud-based dashboard for pathology image analysis. MRP project connected
 
 ## Repo State (as of 2026-06-27)
 - Git repo initialized at project root, connected to `https://github.com/satvikkaul/secure-pathology-dashboard.git`
-- **Working tree: only docs files modified.** All frontend/source changes from UI Polish Session 2 are committed.
+- **Working tree: 5 modified source files + 3 new untracked files.** UI Polish Session 3 work is uncommitted.
 - Commit history (latest first):
-  - `0b1e51d` — style: polish phase 1 workflow UI ← HEAD (Playwright-verified 41/41)
+  - `68b9933` — docs: update session log and next steps after Playwright verification ← HEAD
+  - `0b1e51d` — style: polish phase 1 workflow UI (Playwright-verified 41/41)
   - `ce1f853` — style: polish 1 dashboard UI (includes Codex review fixes + UI polish)
   - `4773a23` — feat: complete phase 1 dashboard prototype
   - `b8edcd2` — feat: scaffold verified phase 1 backend prototype
-  - `c5777f6` — feat: scaffold phase 1 backend prototype
+
+**Uncommitted changed files:**
+```
+ M frontend/src/App.jsx
+ M frontend/src/pages/DashboardPage.css
+ M frontend/src/pages/DashboardPage.jsx
+ M frontend/src/pages/JobResultPage.jsx
+ M frontend/src/pages/UploadPage.jsx
+?? frontend/src/components/AppLayout.jsx
+?? frontend/src/pages/JobsPage.css
+?? frontend/src/pages/JobsPage.jsx
+```
 
 ## Codex Review Fixes (2026-06-25)
 
@@ -264,14 +276,78 @@ M  frontend/src/pages/UploadPage.jsx
 
 ## Current Unresolved Issues
 
-**All UI Polish Session 2 work verified (2026-06-27) — 41/41 Playwright checks pass.**
+**All UI Polish Session 2 work verified (2026-06-27) — 41/41 Playwright checks pass** (commit `0b1e51d`).
 
-Verified in commit `0b1e51d`:
-- UploadPage: step indicators, drop zone, algorithm lock/unlock, file preview, Remove + same-file reselect, submit → /jobs/:id ✓
-- JobResultPage: two-column layout, metric grid (Prediction + Confidence), findings card, prototype notice, image summary in aside ✓
-- Dashboard: sidebar collapse (desktop), mobile burger + overlay, Sign Out from sidebar footer, profile chip initials ✓
+**UI Polish Session 3 work is build-verified (39 modules, 0 warnings) but not yet manually tested in browser or Playwright.**
 
-**"Analysis Jobs" nav link** routes to `/dashboard` — no separate jobs list page exists in Phase 1. This is acceptable for the demo.
+Flows that need manual verification before committing:
+- Sidebar present and correct active state on Dashboard, Upload, Jobs list, Job result pages
+- `/jobs` empty state and populated list render correctly
+- Completed job "View Result →" link navigates to `/jobs/:id`
+- Sidebar toggle lives inside sidebar brand (not in topbar) on desktop
+- Mobile drawer still works on all pages
+- Sign Out from sidebar footer works on all pages
+- `ProtectedRoute` blocks `/jobs` when unauthenticated
+
+## UI Polish Session 3 (2026-06-27)
+
+### Sidebar toggle moved into sidebar
+**Problem:** The desktop collapse toggle (`dash-burger--desktop`) lived inside `dash-topbar-left` in the main content area, making the header feel cluttered and the toggle disconnected from what it controls.
+
+**Fix — `DashboardPage.css`:**
+- Added `.sb-toggle`: 28×28px button, `display: none` by default, `display: flex` at ≥1024px. Subtle border + hover.
+- Added `flex: 1` to `.sb-title-block` so it fills the brand row and pushes the toggle to the trailing edge.
+- `.dash-sidebar--collapsed .sb-brand`: changed to `flex-direction: column; align-items: center; gap: 8px` — collapsed brand stacks SPD logo above toggle, both centered.
+- Removed `.dash-burger--desktop` display rules (class no longer rendered).
+
+**Fix — `DashboardPage.jsx`:**
+- Added `<button className="sb-toggle">` inside `sb-brand` after `sb-title-block`. Shows `‹` / `›` and dynamic `aria-label`. Wires to existing `setSidebarCollapsed`.
+- Removed `dash-burger--desktop` button from `dash-topbar-left`. Mobile `dash-burger--mobile` retained in topbar.
+
+### Shared AppLayout component (sidebar persistent across all pages)
+**Problem:** `UploadPage` and `JobResultPage` used a flat `dash-page`/`dash-header` layout with no sidebar. The sidebar only appeared on the Dashboard.
+
+**New file: `frontend/src/components/AppLayout.jsx`**
+- Owns `sidebarCollapsed` / `sidebarOpen` state, `handleLogout`, mobile overlay, sidebar JSX, topbar, footer.
+- Uses `useLocation()` for dynamic active nav: `/dashboard` → Dashboard active; `/upload` → Upload Image active; `/jobs` or `/jobs/*` → Analysis Jobs active.
+- Props: `pageTitle` (string), `pageSub` (string, optional), `children`.
+- Imports `DashboardPage.css` for all sidebar/shell classes.
+
+**`DashboardPage.jsx` refactored:**
+- Removed: `useNavigate`, `getInitials`, `logout`, sidebar state + handlers, all sidebar/overlay/topbar/footer JSX.
+- Now renders only `<AppLayout>` wrapping `<div className="dash-body">` with the data cards.
+- Kept: `useAuth` for `user`, `listImages`/`listJobs` data fetching, `formatBytes`.
+
+**`UploadPage.jsx` refactored:**
+- Removed: `Link`, `useAuth` import, `dash-page`/`dash-header` outer wrapper, "Back to Dashboard" link, Sign Out button.
+- Removed stale `DashboardPage.css` import (AppLayout handles it).
+- Wraps `<main className="up-body">` in `<AppLayout pageTitle="Upload Image" …>`.
+- All drag-drop, validation, and submit logic unchanged.
+
+**`JobResultPage.jsx` refactored:**
+- Removed: `Link`, `dash-page`/`dash-header` outer wrapper, "Back to Dashboard" link, "Run Another Upload" button.
+- Wraps `<main className="jr-body">` in `<AppLayout pageTitle="Analysis Result" …>`.
+- Navigation to `/upload` now via sidebar. All report rendering logic unchanged.
+
+### Analysis Jobs page (new route `/jobs`)
+**New file: `frontend/src/pages/JobsPage.jsx`**
+- Fetches `listJobs()` on mount.
+- Empty state: card with "No jobs yet" + "Upload Image" button → `/upload`.
+- Populated state: `dash-card` with one `jl-row` per job; shows Job ID, algorithm name, created date, status badge.
+- Completed jobs: "View Result →" link → `/jobs/:id`.
+- Pending/running/failed jobs: status badge only, no link.
+
+**New file: `frontend/src/pages/JobsPage.css`**
+- `jl-*` prefix. Eyebrow pill, title, subtitle, empty state card, job row layout.
+- Reuses `dash-card`, `dash-badge`, `dash-body`, `dash-loading`, `dash-error` from `DashboardPage.css`.
+- Mobile: rows stack to column at ≤480px.
+
+**`App.jsx` updated:** added `/jobs` route (protected) above `/jobs/:id`.
+
+**`AppLayout.jsx` "Analysis Jobs" nav link:** restored, points to `/jobs`, active on `/jobs` and `/jobs/*`.
+
+### Build status
+`npm run build` — clean (39 modules, 0 warnings).
 
 ## Known Backend Issues from Code Review (resolved)
 1. **Full file buffered before size check** — FIXED (streaming now)

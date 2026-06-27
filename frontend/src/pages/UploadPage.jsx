@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import { listAlgorithms } from '../api/algorithms'
 import { uploadImage } from '../api/images'
 import { submitJob } from '../api/jobs'
-import './DashboardPage.css'
+import AppLayout from '../components/AppLayout'
 import './UploadPage.css'
 
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png']
@@ -18,7 +17,6 @@ function formatBytes(bytes) {
 
 function UploadPage() {
   const navigate = useNavigate()
-  const { logout } = useAuth()
 
   const fileInputRef = useRef(null)
   const [file, setFile] = useState(null)
@@ -105,34 +103,7 @@ function UploadPage() {
   const canSubmit = Boolean(file && algorithmName && !isSubmitting && !isLoadingAlgorithms)
 
   return (
-    <div className="dash-page">
-      <header className="dash-header">
-        <div>
-          <div className="dash-brand">Secure Pathology Dashboard</div>
-          <div style={{ fontSize: '12px', color: 'var(--c-text-lo)', marginTop: '2px' }}>
-            Phase 1 Research Prototype
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <Link
-            to="/dashboard"
-            style={{
-              padding: '7px 14px',
-              fontSize: '13px',
-              fontWeight: 600,
-              color: 'var(--c-text)',
-              background: 'var(--c-surface-lo)',
-              border: '1px solid var(--c-border)',
-              borderRadius: '8px',
-              textDecoration: 'none',
-            }}
-          >
-            Back to Dashboard
-          </Link>
-          <button className="dash-logout" onClick={logout}>Sign Out</button>
-        </div>
-      </header>
-
+    <AppLayout pageTitle="Upload Image" pageSub="Prototype analysis · JPG or PNG · max 10 MB">
       <main className="up-body">
         <span className="up-eyebrow">Upload Workflow</span>
         <h1 className="up-title">Upload Pathology Image</h1>
@@ -290,7 +261,7 @@ function UploadPage() {
           </aside>
         </div>
       </main>
-    </div>
+    </AppLayout>
   )
 }
 
