@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Pathology Dashboard - Job Result</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: "#f7f9fb",
+            surface: "#ffffff",
+            "surface-low": "#f2f4f6",
+            primary: "#091426",
+            "primary-soft": "#1e293b",
+            secondary: "#d0e1fb",
+            text: "#191c1e",
+            muted: "#45474c",
+            outline: "#c5c6cd",
+            success: "#1f5f3a",
+            "success-bg": "#dff4e7",
+            warning: "#7a4b00",
+            "warning-bg": "#fff1d6"
+          },
+          fontFamily: {
+            sans: ["Hanken Grotesk", "sans-serif"]
+          },
+          boxShadow: {
+            soft: "0 4px 20px rgba(30, 41, 59, 0.06)"
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: "Hanken Grotesk", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(208, 225, 251, 0.55), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(188, 199, 222, 0.35), transparent 30%),
+        #f7f9fb;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-text">
+  <div class="min-h-screen flex flex-col">
+    <header class="border-b border-outline bg-white/90 backdrop-blur">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div>
+          <p class="text-lg font-semibold tracking-[-0.01em] text-primary-soft">Secure Pathology Dashboard</p>
+          <p class="text-sm text-muted">Phase 1 Research Prototype</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="#" class="rounded-lg border border-outline bg-white px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface-low">Back to Dashboard</a>
+          <a href="#" class="rounded-lg bg-primary-soft px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary">Run Another Upload</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-6">
+      <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div class="max-w-3xl">
+          <p class="mb-2 inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+            <span class="material-symbols-outlined text-[16px]">description</span>
+            Generated Report
+          </p>
+          <h1 class="text-3xl font-semibold tracking-[-0.02em] text-primary">Analysis Result</h1>
+          <p class="mt-2 text-sm leading-6 text-muted">
+            This screen summarizes the completed prototype analysis job and presents the generated report content in a format that is easier to review than raw JSON.
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-outline bg-white px-4 py-3 shadow-soft">
+          <p class="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Job Status</p>
+          <div class="mt-2 inline-flex items-center gap-2 rounded-full bg-success-bg px-3 py-1 text-sm font-semibold text-success">
+            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+            Completed
+          </div>
+        </div>
+      </div>
+
+      <div class="grid gap-5 lg:grid-cols-[minmax(0,1.55fr)_300px]">
+        <section class="space-y-5">
+          <section class="rounded-2xl border border-outline bg-white p-5 shadow-soft">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="text-lg font-semibold text-primary">Report Summary</h2>
+                <p class="text-sm text-muted">Prototype output based on the selected uploaded pathology image.</p>
+              </div>
+              <span class="rounded-full bg-surface-low px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Not for clinical use</span>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="rounded-2xl bg-surface-low p-4">
+                <p class="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Prediction</p>
+                <p class="mt-2 text-2xl font-semibold text-primary">Benign</p>
+                <p class="mt-2 text-sm text-muted">Prototype classification result for this uploaded image.</p>
+              </div>
+
+              <div class="rounded-2xl bg-surface-low p-4">
+                <p class="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Confidence</p>
+                <p class="mt-2 text-2xl font-semibold text-primary">87%</p>
+                <p class="mt-2 text-sm text-muted">Confidence is illustrative only and should not be interpreted clinically.</p>
+              </div>
+            </div>
+
+            <div class="mt-5 rounded-2xl border border-outline bg-white p-4">
+              <div class="mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px] text-primary-soft">summarize</span>
+                <h3 class="text-base font-semibold text-primary">Generated Report</h3>
+              </div>
+              <div class="space-y-4 text-sm leading-6 text-muted">
+                <p>
+                  The prototype analysis completed successfully and returned a benign classification with moderate-to-high confidence.
+                  No urgent abnormality markers are surfaced in this mock result.
+                </p>
+                <p>
+                  This report is intended to demonstrate the user flow, result formatting, and privacy-aware presentation of per-user analysis output within the dashboard.
+                </p>
+                <p>
+                  In a future phase, this section could include structured findings, algorithm version notes, reviewer comments, and export-ready report formatting.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-outline bg-white p-5 shadow-soft">
+            <div class="mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px] text-primary-soft">format_list_bulleted</span>
+              <h2 class="text-lg font-semibold text-primary">Findings</h2>
+            </div>
+
+            <div class="space-y-3">
+              <div class="rounded-xl border border-outline bg-surface-low p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="text-sm font-semibold text-primary">Benign morphology signal</p>
+                  <span class="text-sm font-semibold text-primary">87%</span>
+                </div>
+                <p class="mt-2 text-sm text-muted">Primary synthetic signal returned by the placeholder classifier.</p>
+              </div>
+
+              <div class="rounded-xl border border-outline bg-surface-low p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="text-sm font-semibold text-primary">Background tissue consistency</p>
+                  <span class="text-sm font-semibold text-primary">74%</span>
+                </div>
+                <p class="mt-2 text-sm text-muted">Illustrative secondary finding shown to demonstrate structured result rows.</p>
+              </div>
+
+              <div class="rounded-xl border border-outline bg-surface-low p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="text-sm font-semibold text-primary">Anomaly flag</p>
+                  <span class="text-sm font-semibold text-primary">Low</span>
+                </div>
+                <p class="mt-2 text-sm text-muted">No critical alert in this prototype result example.</p>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <aside class="space-y-5">
+          <section class="rounded-2xl border border-outline bg-white p-5 shadow-soft">
+            <div class="mb-3 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px] text-primary-soft">badge</span>
+              <h2 class="text-base font-semibold text-primary">Job Details</h2>
+            </div>
+            <dl class="space-y-3 text-sm">
+              <div class="flex items-start justify-between gap-3">
+                <dt class="text-muted">Job ID</dt>
+                <dd class="font-semibold text-primary">#12</dd>
+              </div>
+              <div class="flex items-start justify-between gap-3">
+                <dt class="text-muted">Image ID</dt>
+                <dd class="font-semibold text-primary">#41</dd>
+              </div>
+              <div class="flex items-start justify-between gap-3">
+                <dt class="text-muted">Algorithm</dt>
+                <dd class="font-semibold text-primary">placeholder_v1</dd>
+              </div>
+              <div class="flex items-start justify-between gap-3">
+                <dt class="text-muted">Created</dt>
+                <dd class="text-right font-semibold text-primary">Jun 26, 2026<br />10:14 AM</dd>
+              </div>
+              <div class="flex items-start justify-between gap-3">
+                <dt class="text-muted">Completed</dt>
+                <dd class="text-right font-semibold text-primary">Jun 26, 2026<br />10:14 AM</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section class="rounded-2xl border border-outline bg-white p-5 shadow-soft">
+            <div class="mb-3 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px] text-primary-soft">image</span>
+              <h2 class="text-base font-semibold text-primary">Image Summary</h2>
+            </div>
+            <div class="rounded-xl border border-outline bg-surface-low p-4">
+              <p class="text-sm font-semibold text-primary">slide_sample_001.png</p>
+              <p class="mt-2 text-sm text-muted">PNG image • 4.2 MB</p>
+              <p class="mt-3 text-sm text-muted">Uploaded by the current user for this analysis run.</p>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-outline bg-white p-5 shadow-soft">
+            <div class="mb-3 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px] text-primary-soft">warning</span>
+              <h2 class="text-base font-semibold text-primary">Prototype Notice</h2>
+            </div>
+            <div class="rounded-xl bg-warning-bg p-4 text-sm leading-6 text-warning">
+              This generated report is a demo artifact for workflow validation only. It should not be used for diagnosis, treatment, or clinical decision-making.
+            </div>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

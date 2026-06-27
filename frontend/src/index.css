@@ -17,6 +17,11 @@
   --c-focus:       rgba(59, 130, 246, 0.25);
   --c-error:       #ba1a1a;
   --c-error-bg:    #ffdad6;
+  --c-secondary:   #d0e1fb;
+  --c-success:     #1f5f3a;
+  --c-success-bg:  #dff4e7;
+  --c-warning:     #7a4b00;
+  --c-warning-bg:  #fff1d6;
 
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
   font-size: 16px;

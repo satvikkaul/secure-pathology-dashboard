@@ -1,21 +1,43 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getJob } from '../api/jobs'
+import { getImage } from '../api/images'
+import './DashboardPage.css'
+import './JobResultPage.css'
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function formatDate(iso) {
+  if (!iso) return null
+  const d = new Date(iso)
+  return d.toLocaleString(undefined, {
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit',
+  })
+}
 
 function JobResultPage() {
   const { id } = useParams()
   const [job, setJob] = useState(null)
+  const [image, setImage] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     getJob(id)
-      .then(setJob)
+      .then((j) => {
+        setJob(j)
+        return getImage(j.image_id)
+      })
+      .then(setImage)
       .catch((err) => setError(err.message))
       .finally(() => setIsLoading(false))
   }, [id])
 
-  // Derive parsed result outside JSX — not state, just a read of current job
   let parsedResult = null
   let rawResult = null
   if (job?.result_summary) {
@@ -26,80 +48,239 @@ function JobResultPage() {
     }
   }
 
+  const statusClass = job
+    ? `jr-status-badge jr-status-badge--${job.status}`
+    : 'jr-status-badge'
+
   return (
-    <div>
-      <h1>Job Result</h1>
-      <p>
-        <Link to="/dashboard">Back to dashboard</Link>
-        {' · '}
-        <Link to="/upload">New upload</Link>
-      </p>
+    <div className="dash-page">
+      <header className="dash-header">
+        <div>
+          <div className="dash-brand">Secure Pathology Dashboard</div>
+          <div style={{ fontSize: '12px', color: 'var(--c-text-lo)', marginTop: '2px' }}>
+            Phase 1 Research Prototype
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <Link
+            to="/dashboard"
+            style={{
+              padding: '7px 14px',
+              fontSize: '13px',
+              fontWeight: 600,
+              color: 'var(--c-text)',
+              background: 'var(--c-surface-lo)',
+              border: '1px solid var(--c-border)',
+              borderRadius: '8px',
+              textDecoration: 'none',
+            }}
+          >
+            Back to Dashboard
+          </Link>
+          <Link
+            to="/upload"
+            style={{
+              padding: '7px 14px',
+              fontSize: '13px',
+              fontWeight: 600,
+              color: '#fff',
+              background: 'var(--c-navy)',
+              border: '1px solid var(--c-navy)',
+              borderRadius: '8px',
+              textDecoration: 'none',
+            }}
+          >
+            Run Another Upload
+          </Link>
+        </div>
+      </header>
 
-      <p><strong>Prototype result only — not for clinical use.</strong></p>
+      <main className="jr-body">
+        {isLoading && <p className="jr-loading">Loading…</p>}
+        {error && <p className="jr-error" role="alert">{error}</p>}
 
-      {isLoading && <p>Loading…</p>}
-      {error && <p role="alert">{error}</p>}
+        {job && (
+          <>
+            <div className="jr-heading-row">
+              <div>
+                <span className="jr-eyebrow">Generated Report</span>
+                <h1 className="jr-title">Analysis Result</h1>
+                <p className="jr-subtitle">
+                  This screen summarizes the completed prototype analysis job and
+                  presents the generated report in a format that is easier to review
+                  than raw JSON.
+                </p>
+              </div>
 
-      {job && (
-        <>
-          <section>
-            <h2>Job details</h2>
-            <dl>
-              <dt>Job ID</dt>
-              <dd>{job.id}</dd>
-              <dt>Image ID</dt>
-              <dd>{job.image_id}</dd>
-              <dt>Algorithm</dt>
-              <dd>{job.algorithm_name}</dd>
-              <dt>Status</dt>
-              <dd>{job.status}</dd>
-              <dt>Created</dt>
-              <dd>{new Date(job.created_at).toLocaleString()}</dd>
-              {job.completed_at && (
-                <>
-                  <dt>Completed</dt>
-                  <dd>{new Date(job.completed_at).toLocaleString()}</dd>
-                </>
-              )}
-            </dl>
-          </section>
+              <div className="jr-status-card">
+                <p className="jr-status-label">Job Status</p>
+                <span className={statusClass}>{job.status}</span>
+              </div>
+            </div>
 
-          {(parsedResult || rawResult) && (
-            <section>
-              <h2>Result</h2>
-
-              {rawResult && <pre>{rawResult}</pre>}
-
-              {parsedResult && (
-                <>
-                  {parsedResult.prediction != null && (
-                    <p>
-                      Prediction: <strong>{parsedResult.prediction}</strong>
+            <div className="jr-layout">
+              <div className="jr-main">
+                {!parsedResult && !rawResult && (
+                  <section className="jr-status-panel">
+                    <h2 className="jr-status-panel-title">
+                      {job.status === 'failed'
+                        ? 'Analysis failed'
+                        : job.status === 'running'
+                        ? 'Analysis in progress'
+                        : 'Analysis pending'}
+                    </h2>
+                    <p className="jr-status-panel-body">
+                      {job.status === 'failed'
+                        ? 'The analysis job encountered an error and did not produce a result. No report is available for this run.'
+                        : 'The analysis job has not finished yet. Reload the page to check for an updated result.'}
                     </p>
-                  )}
-                  {parsedResult.confidence != null && (
-                    <p>Confidence: {Math.round(parsedResult.confidence * 100)}%</p>
-                  )}
-                  {Array.isArray(parsedResult.findings) &&
-                    parsedResult.findings.length > 0 && (
+                  </section>
+                )}
+
+                {(parsedResult || rawResult) && (
+                  <section className="jr-card">
+                    <div className="jr-card-hd">
+                      <div>
+                        <h2 className="jr-card-title">Report Summary</h2>
+                        <p className="jr-card-sub">
+                          Prototype output based on the selected uploaded pathology image.
+                        </p>
+                      </div>
+                      <span className="jr-not-clinical">Not for clinical use</span>
+                    </div>
+
+                    {parsedResult && (
                       <>
-                        <h3>Findings</h3>
-                        <ul>
-                          {parsedResult.findings.map((f, i) => (
-                            <li key={i}>
-                              {f.label} — {Math.round(f.score * 100)}%
-                            </li>
-                          ))}
-                        </ul>
+                        <div className="jr-metrics">
+                          {parsedResult.prediction != null && (
+                            <div className="jr-metric-box">
+                              <p className="jr-metric-label">Prediction</p>
+                              <p className="jr-metric-value" style={{ textTransform: 'capitalize' }}>
+                                {parsedResult.prediction}
+                              </p>
+                              <p className="jr-metric-note">
+                                Prototype classification result for this uploaded image.
+                              </p>
+                            </div>
+                          )}
+                          {parsedResult.confidence != null && (
+                            <div className="jr-metric-box">
+                              <p className="jr-metric-label">Confidence</p>
+                              <p className="jr-metric-value">
+                                {Math.round(parsedResult.confidence * 100)}%
+                              </p>
+                              <p className="jr-metric-note">
+                                Confidence is illustrative only and should not be
+                                interpreted clinically.
+                              </p>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="jr-report-box">
+                          <p className="jr-report-title">Generated Report</p>
+                          <div className="jr-report-body">
+                            {parsedResult.prediction != null && parsedResult.confidence != null && (
+                              <p>
+                                The prototype analysis completed successfully and returned
+                                a <strong style={{ textTransform: 'capitalize' }}>{parsedResult.prediction}</strong> classification
+                                with {Math.round(parsedResult.confidence * 100)}% confidence.
+                                No urgent abnormality markers are surfaced in this prototype result.
+                              </p>
+                            )}
+                            {parsedResult.note && <p>{parsedResult.note}</p>}
+                            <p>
+                              In a future phase, this section could include structured
+                              findings, algorithm version notes, reviewer comments, and
+                              export-ready report formatting.
+                            </p>
+                          </div>
+                        </div>
                       </>
                     )}
-                  {parsedResult.note && <p><em>{parsedResult.note}</em></p>}
-                </>
-              )}
-            </section>
-          )}
-        </>
-      )}
+
+                    {rawResult && (
+                      <pre style={{ fontSize: '13px', color: 'var(--c-text)', overflowX: 'auto' }}>
+                        {rawResult}
+                      </pre>
+                    )}
+                  </section>
+                )}
+
+                {parsedResult?.findings?.length > 0 && (
+                  <section className="jr-card">
+                    <h2 className="jr-findings-card-title">Findings</h2>
+                    {parsedResult.findings.map((f, i) => (
+                      <div key={i} className="jr-finding">
+                        <div className="jr-finding-top">
+                          <p className="jr-finding-label">{f.label}</p>
+                          <span className="jr-finding-score">
+                            {Math.round(f.score * 100)}%
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </section>
+                )}
+              </div>
+
+              <aside className="jr-aside">
+                <div className="jr-aside-card">
+                  <h3 className="jr-aside-card-title">Job Details</h3>
+                  <dl className="jr-details-dl">
+                    <div className="jr-detail-row">
+                      <dt className="jr-detail-key">Job ID</dt>
+                      <dd className="jr-detail-val">#{job.id}</dd>
+                    </div>
+                    <div className="jr-detail-row">
+                      <dt className="jr-detail-key">Image ID</dt>
+                      <dd className="jr-detail-val">#{job.image_id}</dd>
+                    </div>
+                    <div className="jr-detail-row">
+                      <dt className="jr-detail-key">Algorithm</dt>
+                      <dd className="jr-detail-val">{job.algorithm_name}</dd>
+                    </div>
+                    <div className="jr-detail-row">
+                      <dt className="jr-detail-key">Created</dt>
+                      <dd className="jr-detail-val">{formatDate(job.created_at)}</dd>
+                    </div>
+                    {job.completed_at && (
+                      <div className="jr-detail-row">
+                        <dt className="jr-detail-key">Completed</dt>
+                        <dd className="jr-detail-val">{formatDate(job.completed_at)}</dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+
+                {image && (
+                  <div className="jr-aside-card">
+                    <h3 className="jr-aside-card-title">Image Summary</h3>
+                    <div className="jr-image-box">
+                      <p className="jr-image-box-name">Image #{image.id}</p>
+                      <p className="jr-image-box-meta">
+                        {image.content_type} · {formatBytes(image.file_size)}
+                      </p>
+                      <p className="jr-image-box-note">
+                        Uploaded by the current user for this analysis run.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="jr-aside-card">
+                  <h3 className="jr-aside-card-title">Prototype Notice</h3>
+                  <div className="jr-notice-box">
+                    This generated report is a demo artifact for workflow validation
+                    only. It should not be used for diagnosis, treatment, or clinical
+                    decision-making.
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </>
+        )}
+      </main>
     </div>
   )
 }
