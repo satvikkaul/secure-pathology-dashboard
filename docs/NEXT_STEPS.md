@@ -1,9 +1,8 @@
 # Next Steps
 
 ## Current Status
-**Phase 1 prototype is feature-complete, polished, and build-verified. UI Polish Session 3 work is uncommitted.**
-HEAD is `68b9933` on `main`; `origin/main` is at `ce1f853`.
-Working tree has 5 modified source files + 3 new untracked files (see SESSION_LOG.md).
+**Phase 1 prototype is feature-complete, polished, committed, and pushed.**
+HEAD is `0fd801d` on `main`; `origin/main` is at `0fd801d`. Working tree is clean.
 Repo is at `https://github.com/satvikkaul/secure-pathology-dashboard`.
 
 To start the backend (requires a real `SECRET_KEY` in `backend/.env`):
@@ -23,41 +22,15 @@ npm run dev
 
 ---
 
-## Immediate Next Task: Manual verify then commit
+## Immediate Next Task: README rewrite
 
-**Step 1 — Manual browser verification** (run `npm run dev` + `uvicorn`):
-- [ ] Sidebar present on Dashboard, Upload, Jobs list, Job result pages
-- [ ] Sidebar toggle (`‹`/`›`) is inside the sidebar brand area, not in the topbar
-- [ ] `/jobs` empty state renders; "Upload Image" button navigates to `/upload`
-- [ ] `/jobs` with jobs shows list; "View Result →" links to `/jobs/:id`
-- [ ] Active nav state correct: Dashboard active on `/dashboard`, Upload Image active on `/upload`, Analysis Jobs active on `/jobs` and `/jobs/:id`
-- [ ] Sign Out from sidebar footer works on all pages
-- [ ] Mobile drawer still works (☰ in topbar, overlay closes drawer)
+Everything is committed. The next task for professor demo readiness is rewriting the root `README.md` (currently Vite boilerplate) to cover:
+- What the project is (secure pathology dashboard, MRP, Phase 1)
+- Setup instructions (backend + frontend)
+- What Phase 1 demonstrates (end-to-end workflow, no real data)
+- Phase 1 scope and what is explicitly out of scope
 
-**Step 2 — Commit source changes:**
-```bash
-git add frontend/src/App.jsx \
-        frontend/src/components/AppLayout.jsx \
-        frontend/src/pages/DashboardPage.css \
-        frontend/src/pages/DashboardPage.jsx \
-        frontend/src/pages/JobResultPage.jsx \
-        frontend/src/pages/JobsPage.css \
-        frontend/src/pages/JobsPage.jsx \
-        frontend/src/pages/UploadPage.jsx
-```
-Suggested message:
-```
-feat: add shared AppLayout, sidebar polish, and Analysis Jobs page
-```
-
-**Step 3 — Commit docs:**
-```bash
-git add docs/FRONTEND_PLAN.md docs/NEXT_STEPS.md docs/SESSION_LOG.md
-```
-Suggested message:
-```
-docs: update session log and next steps for UI Polish Session 3
-```
+After that, screenshots and a demo script.
 
 ---
 
@@ -65,9 +38,9 @@ docs: update session log and next steps for UI Polish Session 3
 
 | Task | Status | Notes |
 |---|---|---|
-| **Sidebar toggle inside sidebar** | Done, not yet verified | Build clean; needs browser check |
-| **Sidebar persistent across all pages** | Done, not yet verified | AppLayout shared component |
-| **Analysis Jobs page (`/jobs`)** | Done, not yet verified | JobsPage.jsx + JobsPage.css |
+| **Sidebar toggle inside sidebar** | Done ✓ | Committed `0fd801d` |
+| **Sidebar persistent across all pages** | Done ✓ | AppLayout shared component, committed |
+| **Analysis Jobs page (`/jobs`)** | Done ✓ | JobsPage.jsx + JobsPage.css, committed |
 | **Dashboard sidebar (original)** | Done + verified ✓ | Playwright 41/41 pass (commit `0b1e51d`) |
 | **UploadPage UI** | Done + verified ✓ | Playwright 41/41 pass |
 | **JobResultPage UI** | Done + verified ✓ | Playwright 41/41 pass |

@@ -8,25 +8,13 @@ Secure cloud-based dashboard for pathology image analysis. MRP project connected
 
 ## Repo State (as of 2026-06-27)
 - Git repo initialized at project root, connected to `https://github.com/satvikkaul/secure-pathology-dashboard.git`
-- **Working tree: 5 modified source files + 3 new untracked files.** UI Polish Session 3 work is uncommitted.
+- **Working tree: clean.** All UI Polish Session 3 work committed and pushed.
 - Commit history (latest first):
-  - `68b9933` — docs: update session log and next steps after Playwright verification ← HEAD
+  - `0fd801d` — style: sidebar UI polish - added job history phase 1 ← HEAD, origin/main
+  - `68b9933` — docs: update session log and next steps after Playwright verification
   - `0b1e51d` — style: polish phase 1 workflow UI (Playwright-verified 41/41)
   - `ce1f853` — style: polish 1 dashboard UI (includes Codex review fixes + UI polish)
   - `4773a23` — feat: complete phase 1 dashboard prototype
-  - `b8edcd2` — feat: scaffold verified phase 1 backend prototype
-
-**Uncommitted changed files:**
-```
- M frontend/src/App.jsx
- M frontend/src/pages/DashboardPage.css
- M frontend/src/pages/DashboardPage.jsx
- M frontend/src/pages/JobResultPage.jsx
- M frontend/src/pages/UploadPage.jsx
-?? frontend/src/components/AppLayout.jsx
-?? frontend/src/pages/JobsPage.css
-?? frontend/src/pages/JobsPage.jsx
-```
 
 ## Codex Review Fixes (2026-06-25)
 
@@ -278,16 +266,7 @@ M  frontend/src/pages/UploadPage.jsx
 
 **All UI Polish Session 2 work verified (2026-06-27) — 41/41 Playwright checks pass** (commit `0b1e51d`).
 
-**UI Polish Session 3 work is build-verified (39 modules, 0 warnings) but not yet manually tested in browser or Playwright.**
-
-Flows that need manual verification before committing:
-- Sidebar present and correct active state on Dashboard, Upload, Jobs list, Job result pages
-- `/jobs` empty state and populated list render correctly
-- Completed job "View Result →" link navigates to `/jobs/:id`
-- Sidebar toggle lives inside sidebar brand (not in topbar) on desktop
-- Mobile drawer still works on all pages
-- Sign Out from sidebar footer works on all pages
-- `ProtectedRoute` blocks `/jobs` when unauthenticated
+**UI Polish Session 3 work committed in `0fd801d` (build-verified, 39 modules, 0 warnings).** Playwright re-verification of the new flows has not been run yet — manual browser testing is recommended before the professor demo.
 
 ## UI Polish Session 3 (2026-06-27)
 
