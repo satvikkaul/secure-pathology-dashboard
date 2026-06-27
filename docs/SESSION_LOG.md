@@ -6,10 +6,12 @@ Secure cloud-based dashboard for pathology image analysis. MRP project connected
 ## Current Phase
 **Phase 1 — Local prototype only.** No cloud, no real patient data, no REB dependency, no Docker, no Celery, no WSI, no admin roles.
 
-## Repo State (as of 2026-06-25)
+## Repo State (as of 2026-06-27)
 - Git repo initialized at project root, connected to `https://github.com/satvikkaul/secure-pathology-dashboard.git`
-- **Uncommitted changes present** — Codex review fixes and UI polish are complete but not yet committed. Working tree is dirty (see "Codex Review Fixes" and "UI Polish" sections below). Next step: review diff, then commit.
+- **Working tree: only docs files modified.** All frontend/source changes from UI Polish Session 2 are committed.
 - Commit history (latest first):
+  - `0b1e51d` — style: polish phase 1 workflow UI ← HEAD (Playwright-verified 41/41)
+  - `ce1f853` — style: polish 1 dashboard UI (includes Codex review fixes + UI polish)
   - `4773a23` — feat: complete phase 1 dashboard prototype
   - `b8edcd2` — feat: scaffold verified phase 1 backend prototype
   - `c5777f6` — feat: scaffold phase 1 backend prototype
@@ -176,8 +178,100 @@ frontend/
 - Cross-user job access: User B GET /jobs/1 (User A's) → "Job not found"
 - Dashboard job links navigate to correct /jobs/:id
 
+## UI Polish Session 2 (2026-06-26)
+
+### UploadPage — full restyle (was functional but unstyled)
+
+**New file:** `frontend/src/pages/UploadPage.css`
+
+**Changes to `UploadPage.jsx`:**
+- Drag-and-drop drop zone: `isDragging` state, visual active ring on hover/drag
+- File preview panel: shows filename + size after selection; Remove button resets native input via `fileInputRef` (prevents same-file reselect bug)
+- Step indicator badges (1→2→3) activate progressively: step 1+2 activate on file pick, step 3 activates when both file + algorithm are chosen
+- Algorithm section locked (`opacity-50`, `pointer-events: none`) until file is selected
+- "Upload and Run" button disabled until both file + algorithm are selected
+- Aside panel: Selected Model card, File Requirements card, privacy note (navy dark card)
+- Header reuses `dash-header`/`dash-brand`/`dash-logout` from DashboardPage.css; includes "Back to Dashboard" link and Sign Out button
+
+**Bug fixes applied during this work:**
+- `clearFile()` now resets `fileInputRef.current.value = ''` so selecting the same file again re-fires `onChange`
+- `applyFile()` on validation failure now clears `file` state and resets the input before returning — prevents old valid file from persisting behind a new error
+
+### JobResultPage — full restyle (was functional but unstyled)
+
+**New file:** `frontend/src/pages/JobResultPage.css`
+
+**Changes to `JobResultPage.jsx`:**
+- Two-column layout: main (report cards) + aside (job details, image summary, prototype notice)
+- Heading row: eyebrow pill + h1 + status badge (green/red/blue by job status)
+- Report Summary card: 2-metric grid (Prediction + Confidence), Generated Report text block
+- Findings card: each finding row with label + score percentage
+- Aside: Job Details `<dl>`, Image Summary (fetches image via `getImage()` to show content type + size), Prototype Notice (amber background)
+- Status panel for non-completed jobs (failed/pending/running) so main column is never empty
+- Generated report summary sentence conditionally rendered only when both `prediction` and `confidence` are non-null
+- `useAuth` import and `logout` destructure removed (unused — no logout action on this page)
+
+**New API function:** `getImage(id)` added to `frontend/src/api/images.js`
+
+### Dashboard — sidebar navigation
+
+**Changes to `DashboardPage.css`:** ~370 lines of sidebar/topbar classes appended. Existing `dash-page`/`dash-header`/`dash-logout` classes untouched — still used by UploadPage and JobResultPage.
+
+**New CSS classes:**
+- `dash-app` — root flex-row shell replacing `dash-page` on the dashboard
+- `dash-sidebar` / `--collapsed` / `--open` — 256px expanded, 72px collapsed (width animates on desktop); fixed off-screen drawer on mobile (`< 1024px`)
+- `sb-brand`, `sb-avatar`, `sb-title-block` — "SPD" logo + "Phase 1 / Secure Pathology Dashboard" brand block
+- `sb-nav-wrap`, `sb-nav-link`, `sb-icon`, `sb-nav-label` — nav items; labels + section label hidden in collapsed state, icons centered
+- `sb-footer`, `sb-user-box`, `sb-user-name`, `sb-user-role`, `sb-signout-btn` — user info + Sign Out pinned to sidebar bottom
+- `dash-overlay` / `--visible` — semi-transparent backdrop for mobile drawer (suppressed via media query on desktop)
+- `dash-main-wrap` — flex column: topbar + body + footer
+- `dash-topbar`, `dash-burger--mobile`, `dash-burger--desktop` — top bar; each burger type toggled by media query
+- `dash-profile`, `dash-profile-avatar`, `dash-profile-name` — avatar chip (initials + name) in top-right; name hidden below 480px
+
+**Changes to `DashboardPage.jsx`:**
+- `sidebarCollapsed` (desktop toggle) and `sidebarOpen` (mobile drawer) as independent state
+- `getInitials(fullName)` helper derives 2-letter avatar (e.g. "Satvik Kaul" → "SK")
+- Nav links: Dashboard (active, `--active` class), Upload Image → `/upload`, Analysis Jobs → `/dashboard` (no separate jobs page in Phase 1)
+- Nav links close mobile drawer on click
+- Sign Out in sidebar footer calls `handleLogout()`
+- `dash-page` → `dash-app`; `dash-header` removed from dashboard; old logout button removed from header
+
+### index.css additions
+5 new color tokens added to `:root`:
+- `--c-secondary: #d0e1fb` — blue pill/badge backgrounds
+- `--c-success: #1f5f3a` / `--c-success-bg: #dff4e7` — completed job badge, status chip
+- `--c-warning: #7a4b00` / `--c-warning-bg: #fff1d6` — prototype notice amber
+
+### Uncommitted changed files
+```
+M  docs/NEXT_STEPS.md
+M  docs/SESSION_LOG.md
+M  frontend/src/api/images.js
+M  frontend/src/index.css
+M  frontend/src/pages/DashboardPage.css
+M  frontend/src/pages/DashboardPage.jsx
+M  frontend/src/pages/JobResultPage.jsx
+M  frontend/src/pages/UploadPage.jsx
+?? frontend/mockups/job_result.html
+?? frontend/mockups/sidebar.html
+?? frontend/mockups/upload_img.html
+?? frontend/src/pages/JobResultPage.css
+?? frontend/src/pages/UploadPage.css
+```
+
+### Build status
+`npm run build` — clean (36 modules, no warnings or errors).
+
 ## Current Unresolved Issues
-None. Phase 1 is feature-complete and verified.
+
+**All UI Polish Session 2 work verified (2026-06-27) — 41/41 Playwright checks pass.**
+
+Verified in commit `0b1e51d`:
+- UploadPage: step indicators, drop zone, algorithm lock/unlock, file preview, Remove + same-file reselect, submit → /jobs/:id ✓
+- JobResultPage: two-column layout, metric grid (Prediction + Confidence), findings card, prototype notice, image summary in aside ✓
+- Dashboard: sidebar collapse (desktop), mobile burger + overlay, Sign Out from sidebar footer, profile chip initials ✓
+
+**"Analysis Jobs" nav link** routes to `/dashboard` — no separate jobs list page exists in Phase 1. This is acceptable for the demo.
 
 ## Known Backend Issues from Code Review (resolved)
 1. **Full file buffered before size check** — FIXED (streaming now)

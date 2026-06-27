@@ -19,14 +19,22 @@ frontend/
 ├── index.html
 ├── vite.config.js          ← proxy: /api/* → http://localhost:8000/*
 ├── package.json
+├── mockups/                ← static HTML reference mockups (not shipped)
+│   ├── login.html
+│   ├── register.html
+│   ├── dashboard.html
+│   ├── sidebar.html
+│   ├── upload_img.html
+│   └── job_result.html
 └── src/
     ├── main.jsx            ← ReactDOM.createRoot + BrowserRouter
     ├── App.jsx             ← all route definitions
+    ├── index.css           ← global tokens: slate/blue palette, typography resets
     │
     ├── api/
     │   ├── client.js       ← fetch wrapper: injects Bearer token, surfaces errors
     │   ├── auth.js         ← register(), login(), getMe()
-    │   ├── images.js       ← uploadImage(), listImages(), getImage()
+    │   ├── images.js       ← uploadImage(), listImages(), getImage(id)
     │   ├── algorithms.js   ← listAlgorithms()
     │   └── jobs.js         ← submitJob(), listJobs(), getJob()
     │
@@ -37,10 +45,14 @@ frontend/
     │   └── ProtectedRoute.jsx  ← redirects to /login if no token in localStorage
     │
     └── pages/
+        ├── auth.css            ← shared card/input/button styles (Login + Register)
         ├── LoginPage.jsx
         ├── RegisterPage.jsx
-        ├── DashboardPage.jsx
+        ├── DashboardPage.css   ← dashboard + sidebar/topbar + shared header classes
+        ├── DashboardPage.jsx   ← sidebar layout (dash-app shell)
+        ├── UploadPage.css      ← upload page layout, drop zone, step indicators
         ├── UploadPage.jsx
+        ├── JobResultPage.css   ← report layout, metrics, aside cards
         └── JobResultPage.jsx
 ```
 
@@ -69,24 +81,27 @@ The Vite proxy (`/api → localhost:8000`) means all frontend fetch calls use re
 
 ## Implementation Order
 
-Each step is independently runnable and verifiable before the next begins.
+All steps complete and Playwright-verified (41/41 checks, 2026-06-27).
 
-| Step | What gets built | Verify by |
+| Step | What gets built | Status |
 |---|---|---|
-| 1 | Vite scaffold + proxy config + `client.js` | `npm run dev` loads blank page, no console errors |
-| 2 | `AuthContext` + `ProtectedRoute` + `App.jsx` routes | Navigate to `/dashboard` redirects to `/login` |
-| 3 | `LoginPage` + `auth.js` | Can log in with a known account; token lands in localStorage |
-| 4 | `RegisterPage` | Can register a new account; redirected to `/login` |
-| 5 | `DashboardPage` + `listImages()` + `listJobs()` | Shows welcome with `full_name`; lists empty state cleanly |
-| 6 | `UploadPage` + `uploadImage()` + `listAlgorithms()` + `submitJob()` | Can pick a file, select `placeholder_v1`, submit; redirects to result |
-| 7 | `JobResultPage` + `getJob()` | Displays `result_summary` fields: prediction, confidence, findings, disclaimer |
+| 1 | Vite scaffold + proxy config + `client.js` | ✓ Done + verified |
+| 2 | `AuthContext` + `ProtectedRoute` + `App.jsx` routes | ✓ Done + verified |
+| 3 | `LoginPage` + `auth.js` | ✓ Done + styled + verified |
+| 4 | `RegisterPage` | ✓ Done + styled + verified |
+| 5 | `DashboardPage` + `listImages()` + `listJobs()` | ✓ Done + sidebar navigation + verified |
+| 6 | `UploadPage` + `uploadImage()` + `listAlgorithms()` + `submitJob()` | ✓ Done + drag-and-drop UI + step indicators + verified |
+| 7 | `JobResultPage` + `getJob()` + `getImage()` | ✓ Done + two-column report layout + verified |
+
+**Beyond original plan (added and verified):**
+- Collapsible sidebar on DashboardPage (256px expanded / 72px collapsed on desktop; mobile drawer)
+- Profile chip (initials + name) in dashboard topbar
+- Drag-and-drop file zone on UploadPage with step indicator progression
+- `getImage(id)` added to images.js for image summary in JobResultPage aside
+- 5 color tokens added to index.css (`--c-secondary`, `--c-success`, `--c-success-bg`, `--c-warning`, `--c-warning-bg`)
 
 ---
 
-## Open Question
+## Open Question (resolved)
 
-The Vite proxy rewrites `/api/auth/register` → `http://localhost:8000/auth/register`. The backend URL and port are set once in `vite.config.js`.
-
-**Does the backend always run on port 8000, or should the port be configurable via a `.env` file** (e.g. `VITE_API_PORT=8000`)?
-
-This must be decided before `vite.config.js` is written.
+Backend port is configurable via `VITE_BACKEND_URL` in `frontend/.env`. Defaults to `http://localhost:8000` in `vite.config.js`. Documented in `frontend/.env.example`.
