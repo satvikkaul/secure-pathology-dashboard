@@ -23,11 +23,12 @@ Before starting any work, read:
 - Explain architectural tradeoffs clearly.
 
 ## Phase 1 Status
-Phase 1 backend and frontend are fully implemented and verified.
+Core Phase 1 backend and frontend flows are implemented and verified. Phase 1 is being extended with user onboarding and a user profile page.
 
 - Backend: all endpoints verified via curl (auth, images, algorithms, jobs, per-user isolation).
-- Frontend: all flows verified in browser (register, login, upload, job result, 401 logout, cross-user blocking).
-- Current focus: repo cleanup, README/demo polish, presentation readiness.
+- Frontend: core flows verified in browser (register, login, upload, job result, 401 logout, cross-user blocking).
+- Phase 1 extension in progress: user onboarding flow and user profile page.
+- Current focus: onboarding/profile page implementation, then demo/presentation readiness.
 
 ## Out of Scope (do not add)
 - Cloud deployment (AWS Canada / Azure Canada)
