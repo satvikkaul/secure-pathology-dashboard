@@ -4,17 +4,33 @@
 Secure cloud-based dashboard for pathology image analysis. MRP project connected to a hospital-independent research team. Users upload pathology images, select algorithms, run them, and view results — with strict per-user data isolation and privacy-aware design.
 
 ## Current Phase
-**Phase 1 — Local prototype only.** No cloud, no real patient data, no REB dependency, no Docker, no Celery, no WSI, no admin roles.
+**Phase 1 — Complete.** The local prototype is built, verified, and ready for professor review. Phase 2 planning has begun.
 
-## Repo State (as of 2026-06-27)
-- Git repo initialized at project root, connected to `https://github.com/satvikkaul/secure-pathology-dashboard.git`
-- **Working tree: clean.** All UI Polish Session 3 work committed and pushed.
+## Phase Transition (2026-06-27)
+
+Phase 1 implementation is complete. The following was completed after the last committed state (`0fd801d`):
+
+- **README rewritten** (commit `7c9119a`) — professor-facing README covering setup, Phase 1 scope, demo workflow, verification summary, and Phase 2 direction.
+- **Cloud-agnostic deployment plan created** (`docs/CLOUD_AGNOSTIC_DEPLOYMENT_PLAN.md`) — local planning doc; not committed to git. Provider-neutral architecture document covering managed database, private object storage, job queue, worker service, security controls, and illustrative provider mapping.
+- **Phase boundary clarified:**
+  - Phase 1 = complete local workflow prototype (auth, upload, jobs, results, sidebar, per-user isolation)
+  - Phase 2 = user onboarding, profile page, cloud architecture planning, database/storage migration, real algorithm integration
+  - Onboarding, profile page, cloud deployment, and algorithm integration are **Phase 2 planning items**, not Phase 1 scope.
+- **Phase 2 plan created** (`docs/PHASE_2_PLAN.md`) — local planning doc; not committed to git. Covers 7 workstreams, proposed order, open questions, and what not to do yet.
+
+## Repo State (updated 2026-06-27)
+- Git repo connected to `https://github.com/satvikkaul/secure-pathology-dashboard.git`
+- **Working tree: local modifications present.** Docs and `.gitignore` have uncommitted changes.
 - Commit history (latest first):
-  - `0fd801d` — style: sidebar UI polish - added job history phase 1 ← HEAD, origin/main
+  - `ec43223` — chore: exclude docs from git tracking ← HEAD (ahead of origin/main)
+  - `7c9119a` — docs: rewrite README for Phase 1 ← origin/main
+  - `0fd801d` — style: sidebar UI polish - added job history phase 1
   - `68b9933` — docs: update session log and next steps after Playwright verification
   - `0b1e51d` — style: polish phase 1 workflow UI (Playwright-verified 41/41)
-  - `ce1f853` — style: polish 1 dashboard UI (includes Codex review fixes + UI polish)
-  - `4773a23` — feat: complete phase 1 dashboard prototype
+- **Local planning docs** (exist locally, not tracked in git index):
+  - `docs/CLOUD_AGNOSTIC_DEPLOYMENT_PLAN.md`
+  - `docs/PHASE_2_PLAN.md`
+  - `docs/cloud_server_options.md`
 
 ## Codex Review Fixes (2026-06-25)
 

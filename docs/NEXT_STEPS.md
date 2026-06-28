@@ -1,11 +1,17 @@
 # Next Steps
 
 ## Current Status
-**Phase 1 prototype is feature-complete, polished, committed, and pushed.**
-HEAD is `0fd801d` on `main`; `origin/main` is at `0fd801d`. Working tree is clean.
-Repo is at `https://github.com/satvikkaul/secure-pathology-dashboard`.
+
+**Phase 1 is complete.**
+
+- All backend endpoints verified via `curl` (auth, images, algorithms, jobs, per-user isolation).
+- Core frontend flows verified in browser. Session 3 UI (jobs list, shared `AppLayout`) is build-verified; browser/Playwright re-verification is recommended before the professor demo.
+- README rewritten for professor demo readiness (commit `7c9119a`).
+- Cloud-agnostic deployment plan created (local planning doc — `docs/CLOUD_AGNOSTIC_DEPLOYMENT_PLAN.md`, not yet committed to git).
+- Phase 2 planning document created (local planning doc — `docs/PHASE_2_PLAN.md`, not yet committed to git).
 
 To start the backend (requires a real `SECRET_KEY` in `backend/.env`):
+
 ```bash
 cd backend
 # First time: cp .env.example .env, then replace SECRET_KEY with output of:
@@ -15,6 +21,7 @@ uvicorn app.main:app --reload
 ```
 
 To start the frontend:
+
 ```bash
 cd frontend
 npm run dev
@@ -22,36 +29,36 @@ npm run dev
 
 ---
 
-## Immediate Next Task: README rewrite
+## Immediate Task: Professor Demo Preparation
 
-Everything is committed. The next task for professor demo readiness is rewriting the root `README.md` (currently Vite boilerplate) to cover:
-- What the project is (secure pathology dashboard, MRP, Phase 1)
-- Setup instructions (backend + frontend)
-- What Phase 1 demonstrates (end-to-end workflow, no real data)
-- Phase 1 scope and what is explicitly out of scope
-
-After that, screenshots and a demo script.
-
----
-
-## Remaining Presentation Work
+The prototype is ready for professor review. Before the demo meeting, complete:
 
 | Task | Status | Notes |
 |---|---|---|
-| **Sidebar toggle inside sidebar** | Done ✓ | Committed `0fd801d` |
-| **Sidebar persistent across all pages** | Done ✓ | AppLayout shared component, committed |
-| **Analysis Jobs page (`/jobs`)** | Done ✓ | JobsPage.jsx + JobsPage.css, committed |
-| **Dashboard sidebar (original)** | Done + verified ✓ | Playwright 41/41 pass (commit `0b1e51d`) |
-| **UploadPage UI** | Done + verified ✓ | Playwright 41/41 pass |
-| **JobResultPage UI** | Done + verified ✓ | Playwright 41/41 pass |
-| **README rewrite** | Not started | Replace Vite boilerplate; cover setup, Phase 1 scope, what's demonstrated |
-| **Demo script** | Not started | Step-by-step: register → login → upload → job → result → logout |
-| **Professor update email** | Not started | Phase 1 summary: built, verified, deferred |
-| **Screenshots** | Not started | Login, register, dashboard, upload, jobs list, job result — for README + email |
+| **Browser verify Session 3 flows** | Not done | Jobs list page, AppLayout persistence, active nav — build-verified only; browser check recommended before demo |
+| **Screenshots** | Not done | Login, Register, Dashboard, Upload, Jobs List, Job Result — for README and presentation |
+| **Demo walkthrough script** | Not done | register → login → upload sample image → select Placeholder v1 → run → view result → logout |
+| **Professor demo / review** | Not done | Present Phase 1 prototype; collect Phase 2 priority feedback |
 
 ---
 
-## What Was Verified (cumulative, as of 2026-06-27)
+## Phase 2 Planning
+
+Phase 2 candidate work — not started, subject to professor and team feedback:
+
+| Item | Description |
+|---|---|
+| **User onboarding** | Welcome/onboarding page after registration or first login |
+| **User profile page** | Read-only account info: name, email, creation date |
+| **Cloud architecture planning** | Provider-neutral architecture review; provider-specific plan once confirmed |
+| **Provider-specific cloud plan** | After cloud provider is confirmed by team or institution |
+| **Algorithm interface design** | Define stable interface for real algorithm registration |
+| **Real algorithm integration planning** | Requirements, compute needs, data governance |
+| **Async job / worker / storage migration** | Queue + worker pattern; PostgreSQL + object storage |
+
+---
+
+## Verification Status (cumulative)
 
 **Backend (curl) — all passing, committed:**
 - All auth, image, algorithm, and job endpoints pass
@@ -60,36 +67,34 @@ After that, screenshots and a demo script.
 
 **Frontend (Playwright) — as of `0b1e51d` (41 checks, all pass):**
 - Register → login → dashboard → upload → job result flow end-to-end
-- 401 in-memory logout: corrupt token → redirect to /login without page reload
+- 401 in-memory logout: corrupt token → redirect to `/login` without page reload
 - Protected routes block unauthenticated access
 - Client-side validation: short password, mismatched passwords, file type, file size
 - Error messages readable (duplicate email, wrong password, Pydantic errors)
 - Dashboard sidebar: collapse/expand, mobile burger + overlay, Sign Out, profile chip initials
-- UploadPage: step indicators, drop zone, algorithm lock/unlock, file preview, Remove + same-file reselect, submit → /jobs/:id
-- JobResultPage: two-column layout, metric grid, findings card, prototype notice (amber), image summary in aside
+- UploadPage: step indicators, drop zone, algorithm lock/unlock, file preview, remove + same-file reselect
+- JobResultPage: two-column layout, metric grid, findings card, prototype notice
 
-**UI Polish Session 3 — build-verified only, browser/Playwright verification pending:**
-- Sidebar toggle inside sidebar brand area (not topbar)
-- Sidebar persistent on Dashboard, Upload, Job Result, Jobs list pages
-- `/jobs` list page: empty state, job rows, "View Result →" links, status badges
-- Active nav state: dynamic via `useLocation()`, correct per route
+**UI Polish Session 3 — build-verified only (commit `0fd801d`):**
+- Sidebar toggle relocated inside sidebar brand area
+- Sidebar persistent on all authenticated pages via shared `AppLayout`
+- `/jobs` list page: empty state, job rows, status badges, result links
+- Active nav state dynamic via `useLocation()`
 
 ---
 
-## Out of Scope (Phase 1 — do not add)
+## Out of Scope (do not add during Phase 1 demo prep)
 
-- Real algorithm integration (Gleason grading, tissue classification, etc.)
-- PostgreSQL migration
-- Role-based access control / admin roles or dashboards
-- Cloud deployment (AWS Canada / Azure Canada)
-- Encrypted cloud storage (S3 / Azure Blob)
-- Celery + Redis job queue
-- Dockerized algorithm containers
-- WSI image format support (.svs, .ndpi, .tiff)
-- REB/ethics approval or real patient data
-- httpOnly secure cookies (localStorage is Phase 1 decision)
-- MFA / SSO
-- File downloads
+- User onboarding page — Phase 2
+- User profile page — Phase 2
+- Cloud deployment — Phase 2
+- PostgreSQL / database migration — Phase 2
+- Real algorithm integration — Phase 2
+- Admin roles or dashboards — Phase 2, only if approved
+- Celery / Redis job queue — Phase 2
+- Docker — Phase 2
+- WSI image format support — Phase 2
+- Real or de-identified patient data — requires institutional approval
 - Formal HIPAA / PIPEDA / PHIPA compliance certification
 
-See `docs/DECISIONS.md` → "Open Decisions (Phase 2+)" for full list.
+See `docs/PHASE_2_PLAN.md` (local planning doc) for the full list, or refer to `docs/DECISIONS.md` for locked Phase 1 decisions.

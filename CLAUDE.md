@@ -23,12 +23,14 @@ Before starting any work, read:
 - Explain architectural tradeoffs clearly.
 
 ## Phase 1 Status
-Core Phase 1 backend and frontend flows are implemented and verified. Phase 1 is being extended with user onboarding and a user profile page.
+Phase 1 is complete. The local prototype is built, verified, and ready for professor review.
 
 - Backend: all endpoints verified via curl (auth, images, algorithms, jobs, per-user isolation).
-- Frontend: core flows verified in browser (register, login, upload, job result, 401 logout, cross-user blocking).
-- Phase 1 extension in progress: user onboarding flow and user profile page.
-- Current focus: onboarding/profile page implementation, then demo/presentation readiness.
+- Frontend: core flows verified in browser; Session 3 UI (jobs list, AppLayout) is build-verified only.
+- README rewritten for demo readiness (commit `7c9119a`).
+- Current focus: professor demo preparation (screenshots, demo script, review meeting).
+
+Phase 2 items (planning only, not yet started): user onboarding, user profile page, cloud architecture planning, database migration, real algorithm integration.
 
 ## Out of Scope (do not add)
 - Cloud deployment (AWS Canada / Azure Canada)

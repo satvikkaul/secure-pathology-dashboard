@@ -29,9 +29,24 @@ The platform should later support:
 - Multi-hospital deployment
 - Complex admin dashboards unless requested
 
-## Open Questions
-- Final tech stack
-- Whether admins can view user uploads/results
+## Phase 1 Status
+Phase 1 is complete. The local prototype has been built, verified, and is ready for professor review. Tech stack is decided and implemented: React + Vite frontend, FastAPI backend, SQLite database.
+
+## Phase 2 Direction
+Phase 2 planning has begun. Workstreams include:
+- User onboarding page
+- User profile page
+- Cloud architecture planning (no deployment yet; provider not yet confirmed)
+- Database migration planning — managed PostgreSQL with a schema migration framework
+- Private object storage integration planning
+- Real algorithm integration planning
+- Async job queue and worker service design
+- Stronger deployed auth and security model planning
+
+## Open Questions (Phase 2)
+- Whether admins can view user uploads/results or only metadata
 - Whether users are physicians only or broader approved researchers
-- Which algorithm should be included first
-- Expected deployment target
+- Which algorithm should be integrated first
+- Expected deployment target and cloud provider preference
+- Expected image formats and sizes beyond JPG/PNG and 10 MB
+- Data governance constraints (real, de-identified, or synthetic data only)

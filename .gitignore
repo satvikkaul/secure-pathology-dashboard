@@ -33,7 +33,3 @@ frontend/node_modules/
 .DS_Store
 Thumbs.db
 
-# Project docs and Claude config — kept locally, not pushed
-docs/
-.claude/
-
