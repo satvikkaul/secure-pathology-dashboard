@@ -1,0 +1,301 @@
+/* ── Body ─────────────────────────────────────────────────────────────────── */
+.pf-body {
+  flex: 1;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* ── Heading ──────────────────────────────────────────────────────────────── */
+.pf-eyebrow {
+  display: inline-block;
+  background: var(--c-secondary);
+  color: var(--c-navy);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+
+.pf-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--c-text-hi);
+  letter-spacing: -0.4px;
+  margin-bottom: 4px;
+}
+
+.pf-subtitle {
+  font-size: 14px;
+  color: var(--c-text-lo);
+  margin-bottom: 24px;
+}
+
+/* ── Cards stack ──────────────────────────────────────────────────────────── */
+.pf-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* ── Definition list rows ─────────────────────────────────────────────────── */
+.pf-dl {
+  margin: 0;
+  padding: 0;
+}
+
+.pf-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.pf-row:last-child {
+  border-bottom: none;
+}
+
+.pf-key {
+  flex: 0 0 160px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text-lo);
+}
+
+.pf-val {
+  flex: 1;
+  font-size: 14px;
+  color: var(--c-text);
+}
+
+.pf-empty {
+  color: var(--c-text-lo);
+}
+
+/* ── Notice ───────────────────────────────────────────────────────────────── */
+.pf-notice {
+  font-size: 13px;
+  color: var(--c-warning);
+  padding: 12px 14px;
+  background: var(--c-warning-bg);
+  border: 1px solid #fcd98a;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+/* ── Card header with action ──────────────────────────────────────────────── */
+.pf-card-hd {
+  justify-content: space-between;
+}
+
+.pf-edit-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--c-navy);
+  background: var(--c-surface-lo);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.pf-edit-btn:hover {
+  background: var(--c-border);
+}
+
+.pf-lock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-lo);
+  background: var(--c-surface-lo);
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+}
+
+/* ── Edit / confirm form body ─────────────────────────────────────────────── */
+.pf-form-body {
+  padding: 18px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pf-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pf-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+
+.pf-label-optional {
+  font-weight: 400;
+  color: var(--c-text-lo);
+  font-size: 12px;
+}
+
+.pf-input,
+.pf-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--c-text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+
+.pf-textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+.pf-input:focus,
+.pf-textarea:focus {
+  outline: none;
+  border-color: var(--c-navy);
+  box-shadow: 0 0 0 3px rgba(15, 40, 80, 0.08);
+}
+
+/* ── Confirm warning banner ───────────────────────────────────────────────── */
+.pf-confirm-warn {
+  padding: 11px 14px;
+  background: var(--c-warning-bg);
+  border: 1px solid #fcd98a;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--c-warning);
+  line-height: 1.5;
+}
+
+.pf-dl--confirm {
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ── Action button row ────────────────────────────────────────────────────── */
+.pf-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.pf-btn-primary {
+  padding: 9px 18px;
+  background: var(--c-navy);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.pf-btn-primary:hover:not(:disabled) {
+  background: var(--c-navy-hover);
+}
+
+.pf-btn-primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.pf-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pf-btn-ghost {
+  padding: 9px 16px;
+  background: transparent;
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.pf-btn-ghost:hover:not(:disabled) {
+  background: var(--c-surface-lo);
+}
+
+.pf-btn-ghost:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Admin note (shown when locked) ──────────────────────────────────────── */
+.pf-admin-note {
+  padding: 12px 18px;
+  font-size: 13px;
+  color: var(--c-text-lo);
+  border-top: 1px solid var(--c-border);
+}
+
+.pf-admin-link {
+  color: var(--c-navy);
+  text-decoration: underline;
+}
+
+/* ── Inline error ─────────────────────────────────────────────────────────── */
+.pf-error {
+  padding: 9px 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #b91c1c;
+}
+
+@media (max-width: 480px) {
+  .pf-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .pf-key {
+    flex: none;
+  }
+  .pf-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .pf-actions {
+    flex-direction: column-reverse;
+  }
+  .pf-btn-primary,
+  .pf-btn-ghost {
+    width: 100%;
+    text-align: center;
+  }
+}

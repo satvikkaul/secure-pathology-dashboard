@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
@@ -40,6 +40,44 @@ class UserOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+AllowedRole = Literal[
+    "Physician", "Pathologist", "Researcher", "Lab Staff", "Student / Trainee", "Other"
+]
+
+
+class ProfileOut(BaseModel):
+    full_name: str
+    email: str
+    role: Optional[str] = None
+    organization_name: Optional[str] = None
+    organization_id: Optional[str] = None
+    employee_id: Optional[str] = None
+    department: Optional[str] = None
+    intended_use: Optional[str] = None
+    onboarding_completed: bool
+    org_fields_locked: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class ProfileUpdate(BaseModel):
+    role: AllowedRole
+    organization_name: Optional[str] = None
+    organization_id: Optional[str] = None
+    employee_id: Optional[str] = None
+    department: Optional[str] = None
+    intended_use: Optional[str] = None
+
+
+class OrgLock(BaseModel):
+    organization_name: Optional[str] = None
+    organization_id: Optional[str] = None
+    employee_id: Optional[str] = None
+    department: Optional[str] = None
+    intended_use: Optional[str] = None
 
 
 class ImageOut(BaseModel):

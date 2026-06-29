@@ -618,6 +618,13 @@
   border-radius: 999px;
   background: var(--c-surface);
   flex-shrink: 0;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.dash-profile:hover {
+  background: var(--c-surface-lo);
+  border-color: var(--c-navy);
 }
 
 .dash-profile-avatar {

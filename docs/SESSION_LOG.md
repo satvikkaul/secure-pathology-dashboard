@@ -4,7 +4,44 @@
 Secure cloud-based dashboard for pathology image analysis. MRP project connected to a hospital-independent research team. Users upload pathology images, select algorithms, run them, and view results — with strict per-user data isolation and privacy-aware design.
 
 ## Current Phase
-**Phase 1 — Complete.** The local prototype is built, verified, and ready for professor review. Phase 2 planning has begun.
+**Phase 2 — In progress.** Phase 1 complete. Phase 2A (lightweight onboarding) implemented and manually verified; not yet committed.
+
+## Session (2026-06-29) — Phase 2A: Lightweight Onboarding Flow
+
+**Completed:**
+- **Backend:** Added 7 profile fields to `User` model (`role`, `organization_name`, `organization_id`, `employee_id`, `department`, `intended_use`, `onboarding_completed`). New `GET /profile/me` + `PUT /profile/me` endpoints in `routers/profile.py`. `AllowedRole` Literal in schemas enforces role allowlist. Router registered in `main.py`.
+- **Frontend:** New `api/profile.js` (`getProfile`, `updateProfile`). `AuthContext` extended to fetch both `/auth/me` and `/profile/me` on mount/login; exposes `onboardingCompleted` + `refreshProfile()`. New `OnboardingGuard` component redirects to `/onboarding` if `onboardingCompleted` is false. New `OnboardingPage.jsx` + `OnboardingPage.css` — role dropdown (required), 2-col org fields grid, intended use textarea, prototype notice, "Continue to Dashboard" submit. `App.jsx` updated: `/onboarding` route is ProtectedRoute-only; all dashboard routes wrapped in `ProtectedRoute + OnboardingGuard`.
+
+**Verified:** `npm run build` — clean (43 modules, 0 warnings). Manually tested end-to-end in browser: register → login → redirect to `/onboarding` → complete form → land on `/dashboard` → subsequent logins skip onboarding.
+
+**DB reset required:** SQLite schema changed; `backend/pathology.db` was deleted and backend restarted to recreate tables.
+
+**Files created:**
+```
+A  backend/app/routers/profile.py
+A  frontend/src/api/profile.js
+A  frontend/src/components/OnboardingGuard.jsx
+A  frontend/src/pages/OnboardingPage.jsx
+A  frontend/src/pages/OnboardingPage.css
+```
+
+**Files modified:**
+```
+M  backend/app/models.py
+M  backend/app/schemas.py
+M  backend/app/main.py
+M  frontend/src/context/AuthContext.jsx
+M  frontend/src/App.jsx
+```
+
+**Unresolved issues:**
+- Phase 2A not yet committed.
+- Session 3 browser/Playwright re-verification still not done (jobs list, AppLayout, active nav).
+- Professor demo prep (screenshots, walkthrough script, demo meeting) not started.
+
+**Next task:** Commit Phase 2A. Then proceed with Phase 2B (profile page) or professor demo prep, as prioritised.
+
+---
 
 ## Session (2026-06-29) — Login UI Polish + Error Message Cleanup
 
@@ -25,6 +62,8 @@ Secure cloud-based dashboard for pathology image analysis. MRP project connected
 
 **Verified:** `npm run build` — clean (39 modules, 0 warnings). No browser/Playwright verification done this session.
 
+**Committed:** `9b2eedb` — `style: phase 2 UI upgrade login and reg screen`
+
 **Files changed:**
 ```
 M  frontend/src/pages/auth.css
@@ -38,7 +77,7 @@ M  frontend/src/pages/LoginPage.jsx
 
 **Next task:** Browser-verify the Login page changes, then browser-verify Session 3 flows (jobs list, AppLayout, active nav), then screenshots and demo script.
 
-**Out of scope this session:** All Phase 2 items; Register/Dashboard/Upload/Jobs/JobResult page changes; backend changes; commits or pushes.
+**Out of scope this session:** All Phase 2 items; Register/Dashboard/Upload/Jobs/JobResult page changes; backend changes.
 
 ---
 
@@ -71,15 +110,15 @@ Phase 1 implementation is complete. The following was completed after the last c
   - Onboarding, profile page, cloud deployment, and algorithm integration are **Phase 2 planning items**, not Phase 1 scope.
 - **Phase 2 plan created** (`docs/PHASE_2_PLAN.md`) — local planning doc; not committed to git. Covers 7 workstreams, proposed order, open questions, and what not to do yet.
 
-## Repo State (updated 2026-06-27)
+## Repo State (updated 2026-06-29)
 - Git repo connected to `https://github.com/satvikkaul/secure-pathology-dashboard.git`
-- **Working tree: local modifications present.** Docs and `.gitignore` have uncommitted changes.
+- **Working tree: Phase 2A changes uncommitted.**
 - Commit history (latest first):
-  - `ec43223` — chore: exclude docs from git tracking ← HEAD (ahead of origin/main)
-  - `7c9119a` — docs: rewrite README for Phase 1 ← origin/main
+  - `9b2eedb` — style: phase 2 UI upgrade login and reg screen ← HEAD
+  - `4e609be` — docs: start phase 2 planning
+  - `ec43223` — chore: exclude docs from git tracking
+  - `7c9119a` — docs: rewrite README for Phase 1
   - `0fd801d` — style: sidebar UI polish - added job history phase 1
-  - `68b9933` — docs: update session log and next steps after Playwright verification
-  - `0b1e51d` — style: polish phase 1 workflow UI (Playwright-verified 41/41)
 - **Local planning docs** (exist locally, not tracked in git index):
   - `docs/CLOUD_AGNOSTIC_DEPLOYMENT_PLAN.md`
   - `docs/PHASE_2_PLAN.md`

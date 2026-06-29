@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -12,6 +12,16 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    # Profile / onboarding fields (Phase 2A)
+    role = Column(String, nullable=True)
+    organization_name = Column(String, nullable=True)
+    organization_id = Column(String, nullable=True)
+    employee_id = Column(String, nullable=True)
+    department = Column(String, nullable=True)
+    intended_use = Column(String, nullable=True)
+    onboarding_completed = Column(Boolean, default=False, nullable=False)
+    org_fields_locked = Column(Boolean, default=False, nullable=False)
 
     images = relationship("Image", back_populates="owner")
     jobs = relationship("AlgorithmJob", back_populates="owner")

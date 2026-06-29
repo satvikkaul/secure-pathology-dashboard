@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import Base, engine, SessionLocal
 from . import models
-from .routers import auth, images, algorithms, jobs
+from .routers import auth, images, algorithms, jobs, profile
 
 
 @asynccontextmanager
@@ -42,3 +42,4 @@ app.include_router(auth.router)
 app.include_router(images.router)
 app.include_router(algorithms.router)
 app.include_router(jobs.router)
+app.include_router(profile.router)

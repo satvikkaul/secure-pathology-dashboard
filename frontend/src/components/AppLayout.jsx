@@ -86,6 +86,14 @@ function AppLayout({ children, pageTitle, pageSub }) {
               <span className="sb-icon">≡</span>
               <span className="sb-nav-label">Analysis Jobs</span>
             </Link>
+            <Link
+              to="/profile"
+              className={`sb-nav-link${path === '/profile' ? ' sb-nav-link--active' : ''}`}
+              onClick={closeMobileSidebar}
+            >
+              <span className="sb-icon">◎</span>
+              <span className="sb-nav-label">My Profile</span>
+            </Link>
           </nav>
         </div>
 
@@ -118,10 +126,10 @@ function AppLayout({ children, pageTitle, pageSub }) {
             </div>
           </div>
 
-          <div className="dash-profile">
+          <Link to="/profile" className="dash-profile">
             <div className="dash-profile-avatar">{initials}</div>
             <span className="dash-profile-name">{user?.full_name}</span>
-          </div>
+          </Link>
         </header>
 
         {children}
