@@ -22,15 +22,17 @@ Before starting any work, read:
 - Prefer small, reviewable changes.
 - Explain architectural tradeoffs clearly.
 
-## Phase 1 Status
-Phase 1 is complete. The local prototype is built, verified, and ready for professor review.
+## Phase Status
 
-- Backend: all endpoints verified via curl (auth, images, algorithms, jobs, per-user isolation).
-- Frontend: core flows verified in browser; Session 3 UI (jobs list, AppLayout) is build-verified only.
-- README rewritten for demo readiness (commit `7c9119a`).
-- Current focus: professor demo preparation (screenshots, demo script, review meeting).
+**Phase 1 — Complete.** Backend and core frontend flows curl and Playwright verified. README rewritten for demo readiness (`7c9119a`).
 
-Phase 2 items (planning only, not yet started): user onboarding, user profile page, cloud architecture planning, database migration, real algorithm integration.
+**Phase 2 — In progress** (commit `5ccc6be`):
+- Phase 2A (lightweight onboarding): role-required onboarding page after first login; `OnboardingGuard` blocks dashboard until complete. Backend: `GET/PUT /profile/me`, `onboarding_completed` flag.
+- Phase 2B (profile page + org locking): read-only account card; editable Professional Context with one-time confirm-and-lock flow. Backend: `POST /profile/me/lock-org`, `org_fields_locked` flag, 409 guard.
+- Both browser-tested. No Playwright coverage yet; Session 3 UI still needs browser re-verification.
+- Current focus: remaining verification cleanup, replacing the placeholder contact email in locked profile state, and professor demo/review prep.
+
+Remaining Phase 2 items (not yet started): cloud architecture planning, PostgreSQL migration, real algorithm integration, async job queue.
 
 ## Out of Scope (do not add)
 - Cloud deployment (AWS Canada / Azure Canada)

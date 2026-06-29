@@ -33,9 +33,13 @@ The platform should later support:
 Phase 1 is complete. The local prototype has been built, verified, and is ready for professor review. Tech stack is decided and implemented: React + Vite frontend, FastAPI backend, SQLite database.
 
 ## Phase 2 Direction
-Phase 2 planning has begun. Workstreams include:
-- User onboarding page
-- User profile page
+
+**Implemented (commit `5ccc6be`):**
+- User onboarding page — role required after first login; gate blocks dashboard until complete
+- User profile page — read-only account info; editable org context with one-time confirm-and-lock
+- Both flows manually browser-tested; no Playwright coverage yet
+
+**Not yet started (pending professor feedback and team confirmation):**
 - Cloud architecture planning (no deployment yet; provider not yet confirmed)
 - Database migration planning — managed PostgreSQL with a schema migration framework
 - Private object storage integration planning

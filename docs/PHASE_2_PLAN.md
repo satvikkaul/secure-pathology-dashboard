@@ -2,7 +2,7 @@
 
 _Secure Pathology Dashboard — Phase 2 Planning Document_
 
-_Prepared: 2026-06-27 | Status: Planning only — Phase 2 implementation has not started_
+_Prepared: 2026-06-27 | Updated: 2026-06-29 | Status: In progress — Phase 2A (onboarding) and Phase 2B (profile page + org locking) implemented in `5ccc6be`. Remaining workstreams not yet started._
 
 ---
 
@@ -18,7 +18,7 @@ Phase 2 is about planning and gradually extending the system beyond the local pr
 - A basis for more detailed implementation plans once priorities are confirmed
 
 **This document is not:**
-- A Phase 2 implementation plan — implementation has not started
+- A claim that every Phase 2 workstream is already underway
 - A cloud deployment commitment
 - A claim of HIPAA, PIPEDA, or PHIPA compliance
 - A feature roadmap with committed timelines
@@ -60,34 +60,37 @@ The following was built, verified, and committed in Phase 1.
 
 ### 3.1 User Onboarding
 
-**Goal:** Improve first-time user experience after registration or first login.
+**Status:** Implemented in initial form in `5ccc6be`; manually browser-tested.
 
-**Possible items:**
-- Welcome or onboarding page shown after registration or first login
-- Clear prototype-use guidance and disclaimer (no real patient data, no clinical use)
-- Short explanation of the workflow: upload an image → select an algorithm → view the result
-- Sample or demo image guidance (which image types and sizes are accepted)
-- Onboarding completion flag to suppress the page on subsequent logins, if needed
+**Current implementation:**
+- Role-required onboarding page shown after first login
+- Onboarding gate blocks dashboard access until completion
+- Prototype-use guidance and disclaimer included in the flow
+- Optional professional-context fields captured alongside the required role
+- Onboarding completion flag suppresses the page on subsequent visits after completion
 
-**Constraint:** Do not overbuild. A single clear welcome page with the workflow summary is sufficient for Phase 2.
+**Remaining follow-up:**
+- Add Playwright coverage
+- Refine copy or field set only if professor/team feedback calls for it
+- Keep the flow lightweight; do not expand into credential verification or RBAC
 
 ---
 
 ### 3.2 User Profile Page
 
-**Goal:** Give users a basic account area accessible from the sidebar.
+**Status:** Implemented in initial form in `5ccc6be`; manually browser-tested.
 
-**Possible items:**
-- Display name and email (read-only, sourced from `GET /auth/me`)
-- Account creation date
-- Prototype role and status notice
-- Placeholder for future profile editing if later approved
+**Current implementation:**
+- Sidebar-accessible profile page
+- Read-only account information (name, email, role, member-since date)
+- Professional-context area with one-time confirm-and-lock behavior
+- Locked-state notice with out-of-band contact path for corrections
+- Profile chip in the top bar links to `/profile`
 
-**Avoid for now:**
-- Password reset or change
-- Admin settings or role management
-- MFA or SSO configuration
-- Complex account management features
+**Remaining follow-up:**
+- Add Playwright coverage
+- Replace the placeholder contact email in the locked state when the real address is known
+- Avoid turning the page into full account management, admin settings, or password-management UI
 
 ---
 
@@ -175,7 +178,7 @@ The following are Phase 2 planning items. None are implemented in Phase 1.
 
 ### 3.7 Demo and Professor Feedback Loop
 
-Before deep Phase 2 implementation begins, the Phase 1 prototype should be demonstrated to the professor and team and feedback collected.
+Before deeper remaining Phase 2 work begins, the current local prototype should be demonstrated to the professor and team and feedback collected.
 
 **Feedback needed on:**
 - Dashboard workflow: does it match the intended research use case?
@@ -191,18 +194,17 @@ Before deep Phase 2 implementation begins, the Phase 1 prototype should be demon
 
 ## 4. Proposed Phase 2 Order
 
-This order is a recommendation. It will be confirmed with the professor and team after Phase 1 review.
+This order reflects the current state after Phase 2A/2B implementation and will still be confirmed with the professor and team.
 
-1. Professor review and demo of Phase 1 prototype
+1. Professor review and demo of the current local prototype
 2. Address any minor UI or workflow fixes from feedback
-3. User onboarding page
-4. User profile page
-5. Provider-neutral cloud architecture review (using `docs/CLOUD_AGNOSTIC_DEPLOYMENT_PLAN.md`)
-6. Provider-specific deployment plan, once cloud provider is confirmed
-7. Algorithm interface design
-8. Real algorithm integration planning (requirements, compute, data governance)
-9. Async job / worker / storage migration planning
-10. Cloud pilot implementation (Stage 2 in `docs/CLOUD_AGNOSTIC_DEPLOYMENT_PLAN.md`), only after steps 1–9 are complete
+3. Add Playwright coverage for onboarding/profile and finish remaining verification cleanup
+4. Provider-neutral cloud architecture review (using `docs/CLOUD_AGNOSTIC_DEPLOYMENT_PLAN.md`)
+5. Provider-specific deployment plan, once cloud provider is confirmed
+6. Algorithm interface design
+7. Real algorithm integration planning (requirements, compute, data governance)
+8. Async job / worker / storage migration planning
+9. Cloud pilot implementation (Stage 2 in `docs/CLOUD_AGNOSTIC_DEPLOYMENT_PLAN.md`), only after steps 1–8 are complete
 
 ---
 
@@ -239,13 +241,14 @@ These must be answered before specific Phase 2 implementation decisions can be m
 
 ## 7. Immediate Next Step
 
-The immediate next step is professor review and demo of the Phase 1 prototype.
+The immediate next step is professor review and demo of the current local prototype, including the Phase 2A/2B onboarding and profile extensions.
 
 **Before the demo meeting:**
 - Take screenshots of each page (Login, Register, Dashboard, Upload, Jobs List, Job Result) for the README and any presentation materials
-- Prepare a brief demo walkthrough: register → login → upload a sample image → select Placeholder Analysis v1 → run → view result report → logout
+- Prepare a brief demo walkthrough: register → login → onboarding → dashboard → upload a sample image → select Placeholder Analysis v1 → run → view result report → profile → logout
+- Add Playwright coverage for onboarding/profile and browser-verify Session 3 flows if time allows
 
 **After professor review:**
 - Collect feedback on the workflow and Phase 2 priorities
 - Confirm Phase 2 order based on feedback
-- Begin implementation in the order described in Section 4
+- Continue remaining Phase 2 work in the order described in Section 4

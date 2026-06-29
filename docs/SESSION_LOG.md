@@ -4,7 +4,60 @@
 Secure cloud-based dashboard for pathology image analysis. MRP project connected to a hospital-independent research team. Users upload pathology images, select algorithms, run them, and view results — with strict per-user data isolation and privacy-aware design.
 
 ## Current Phase
-**Phase 2 — In progress.** Phase 1 complete. Phase 2A (lightweight onboarding) implemented and manually verified; not yet committed.
+**Phase 2 — In progress.** Phase 1 complete. Phase 2A (onboarding) and Phase 2B (profile page + org locking) implemented, verified, and committed in `5ccc6be`.
+
+## Session (2026-06-29) — Phase 2B: Profile Page + Org Locking
+
+**Completed:**
+- **Bug fix (High):** Decoupled auth token clearing from `/profile/me` failures. `getMe()` failure still clears the token; `getProfile()` failure is now caught non-fatally — defaults `onboardingCompleted` to `false` and lands user on `/onboarding`. Applies to mount effect, `login()`, and `logout`. Prevents transient 500s on the profile endpoint from logging out a valid user.
+- **Bug fix (Low):** `ProfilePage` no longer makes its own `/profile/me` fetch. Full profile object now stored in `AuthContext` alongside `onboardingCompleted`; `ProfilePage` reads from context. Eliminates split-read inconsistency and duplicate error path.
+- **Profile page:** New `/profile` route (`ProtectedRoute + OnboardingGuard`). Account Information card (name, email, role, member since — always read-only). Professional Context card with three-state edit machine:
+  - `idle` — read-only display + "Edit" button (if not locked)
+  - `editing` — inline form (org name, department, employee ID, intended use, org ID optional); "Review & Confirm" + "Cancel"
+  - `confirming` — read-only review of pending values + amber lock warning; "Confirm & Lock" + "Go back"
+  - `locked` — read-only + "Locked" badge + contact note with `mailto:` link
+- **Backend:** `org_fields_locked` column added to `User`. New `POST /profile/me/lock-org` endpoint saves org fields and sets lock atomically; returns 409 if already locked. `PUT /profile/me` also returns 409 if locked (backend guard). `OrgLock` schema added. `org_fields_locked` field added to `ProfileOut`.
+- **Profile chip:** Topbar avatar chip (`dash-profile`) converted from `<div>` to `<Link to="/profile">` in `AppLayout`. Hover style added (light background + navy border).
+- **Nav:** "My Profile" sidebar link added in `AppLayout`; active on `/profile`.
+- **DB reset required:** Two new columns (`org_fields_locked` added this session on top of Phase 2A columns). `backend/pathology.db` must be deleted before restart.
+
+**Verified:** `npm run build` — clean (45 modules, 0 warnings). Browser-tested: register → onboarding → dashboard → `/profile` → edit org fields → review → confirm & lock → fields locked; topbar chip navigates to profile.
+
+**Committed:** `5ccc6be` — `feat: add user onboarding flow and profile page`
+
+**Files created:**
+```
+A  backend/app/routers/profile.py
+A  frontend/src/api/profile.js
+A  frontend/src/components/OnboardingGuard.jsx
+A  frontend/src/pages/OnboardingPage.jsx
+A  frontend/src/pages/OnboardingPage.css
+A  frontend/src/pages/ProfilePage.jsx
+A  frontend/src/pages/ProfilePage.css
+```
+
+**Files modified:**
+```
+M  backend/app/models.py
+M  backend/app/schemas.py
+M  backend/app/main.py
+M  frontend/src/App.jsx
+M  frontend/src/api/profile.js
+M  frontend/src/components/AppLayout.jsx
+M  frontend/src/context/AuthContext.jsx
+M  frontend/src/pages/DashboardPage.css
+```
+
+**Unresolved issues:**
+- Session 3 browser/Playwright re-verification not done (jobs list, AppLayout persistence, active nav).
+- No Playwright coverage for onboarding, profile, or org-locking flows yet.
+- `mailto:` link in locked state uses a placeholder address (`admin@secure-pathology-dashboard.local`) — real prototype-owner contact email not configured.
+
+**Next task:** Add Playwright coverage for onboarding/profile flows, browser-verify Session 3 flows, and replace the placeholder contact email in locked profile state. Then proceed with professor demo/review and the next Phase 2 item, subject to feedback.
+
+**Out of scope this session:** Cloud deployment, PostgreSQL migration, real algorithm integration, admin roles, Playwright test suite expansion.
+
+---
 
 ## Session (2026-06-29) — Phase 2A: Lightweight Onboarding Flow
 
@@ -34,12 +87,7 @@ M  frontend/src/context/AuthContext.jsx
 M  frontend/src/App.jsx
 ```
 
-**Unresolved issues:**
-- Phase 2A not yet committed.
-- Session 3 browser/Playwright re-verification still not done (jobs list, AppLayout, active nav).
-- Professor demo prep (screenshots, walkthrough script, demo meeting) not started.
-
-**Next task:** Commit Phase 2A. Then proceed with Phase 2B (profile page) or professor demo prep, as prioritised.
+**Committed:** `5ccc6be` — `feat: add user onboarding flow and profile page` (Phase 2A + 2B committed together).
 
 ---
 
@@ -112,13 +160,13 @@ Phase 1 implementation is complete. The following was completed after the last c
 
 ## Repo State (updated 2026-06-29)
 - Git repo connected to `https://github.com/satvikkaul/secure-pathology-dashboard.git`
-- **Working tree: Phase 2A changes uncommitted.**
+- **Latest feature commit:** `5ccc6be` — `feat: add user onboarding flow and profile page`
 - Commit history (latest first):
-  - `9b2eedb` — style: phase 2 UI upgrade login and reg screen ← HEAD
+  - `5ccc6be` — feat: add user onboarding flow and profile page ← HEAD
+  - `9b2eedb` — style: phase 2 UI upgrade login and reg screen
   - `4e609be` — docs: start phase 2 planning
   - `ec43223` — chore: exclude docs from git tracking
   - `7c9119a` — docs: rewrite README for Phase 1
-  - `0fd801d` — style: sidebar UI polish - added job history phase 1
 - **Local planning docs** (exist locally, not tracked in git index):
   - `docs/CLOUD_AGNOSTIC_DEPLOYMENT_PLAN.md`
   - `docs/PHASE_2_PLAN.md`
