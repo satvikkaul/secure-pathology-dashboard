@@ -6,6 +6,59 @@ Secure cloud-based dashboard for pathology image analysis. MRP project connected
 ## Current Phase
 **Phase 1 — Complete.** The local prototype is built, verified, and ready for professor review. Phase 2 planning has begun.
 
+## Session (2026-06-29) — Login UI Polish + Error Message Cleanup
+
+**Completed:**
+- Read all project docs at session start (full context sync).
+- **Login page UI improved** using `design-taste-frontend` taste skill. CSS-only changes to `auth.css` — no logic, no new dependencies:
+  - Card: `border-top: 3px solid --c-navy` accent bar; padding `36px 32px` → `40px 36px`; shadow slightly elevated
+  - Card header: `border-bottom` separator between title area and form fields
+  - Title: `20px` → `22px`
+  - "Research Prototype" subtitle: plain gray text → uppercase pill badge (inline-block, rounded, outlined)
+  - Inputs: border `transparent` → `1px solid --c-border` (always visible); background `--c-surface-lo` → `--c-surface` (white)
+  - Form gap: `14px` → `16px`
+  - Button: padding `11px` → `12px`; margin-top `4px` → `10px`; `transform: translateY(1px)` on `:active` for tactile feedback
+- **Login error messages cleaned up** in `LoginPage.jsx` catch block:
+  - `"Unauthorized"` → `"Incorrect email or password."`
+  - `"String should have at least 8 characters"` → `"Password must be at least 8 characters."`
+  - All other errors fall through as-is
+
+**Verified:** `npm run build` — clean (39 modules, 0 warnings). No browser/Playwright verification done this session.
+
+**Files changed:**
+```
+M  frontend/src/pages/auth.css
+M  frontend/src/pages/LoginPage.jsx
+```
+
+**Unresolved issues:**
+- Session 3 browser/Playwright re-verification still not done (jobs list page, AppLayout persistence, active nav).
+- Login UI changes are build-verified only; browser check not yet done.
+- Professor demo prep (screenshots, walkthrough script, demo meeting) not started.
+
+**Next task:** Browser-verify the Login page changes, then browser-verify Session 3 flows (jobs list, AppLayout, active nav), then screenshots and demo script.
+
+**Out of scope this session:** All Phase 2 items; Register/Dashboard/Upload/Jobs/JobResult page changes; backend changes; commits or pushes.
+
+---
+
+## Session (2026-06-29) — Tooling Only
+
+**Completed:** No project code changed.
+- Discussed Claude Code skill/plugin installation mechanics.
+- Installed `design-taste-frontend` skill via `npx skills add https://github.com/Leonxlnx/taste-skill` (project-scoped: `University/Research/.agents/skills/design-taste-frontend`).
+- Ponytail plugin already installed; confirmed active.
+
+**Verified:** Nothing project-related.
+
+**Files changed:** None.
+
+**Unresolved issues:** Same as previous session — Session 3 browser/Playwright re-verification not done; professor demo prep (screenshots, walkthrough script, demo meeting) not started.
+
+**Next task:** Browser-verify Session 3 flows (jobs list, AppLayout, active nav), then screenshots and demo script. See NEXT_STEPS.md.
+
+**Out of scope this session:** All Phase 2 items; any source code changes.
+
 ## Phase Transition (2026-06-27)
 
 Phase 1 implementation is complete. The following was completed after the last committed state (`0fd801d`):

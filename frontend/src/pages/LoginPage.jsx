@@ -24,7 +24,14 @@ function LoginPage() {
       await login(access_token)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.message)
+      const msg = err.message
+      if (msg === 'Unauthorized' || msg.toLowerCase().includes('incorrect')) {
+        setError('Incorrect email or password.')
+      } else if (msg.toLowerCase().includes('at least 8')) {
+        setError('Password must be at least 8 characters.')
+      } else {
+        setError(msg)
+      }
     } finally {
       setIsSubmitting(false)
     }

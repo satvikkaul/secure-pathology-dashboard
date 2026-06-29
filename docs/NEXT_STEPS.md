@@ -35,6 +35,7 @@ The prototype is ready for professor review. Before the demo meeting, complete:
 
 | Task | Status | Notes |
 |---|---|---|
+| **Browser verify Login UI + error messages** | Not done | Login card accent bar, subtitle pill, input borders, button tactile feedback; "Incorrect email or password." and "Password must be at least 8 characters." error messages — build-verified only |
 | **Browser verify Session 3 flows** | Not done | Jobs list page, AppLayout persistence, active nav — build-verified only; browser check recommended before demo |
 | **Screenshots** | Not done | Login, Register, Dashboard, Upload, Jobs List, Job Result — for README and presentation |
 | **Demo walkthrough script** | Not done | register → login → upload sample image → select Placeholder v1 → run → view result → logout |
@@ -80,6 +81,10 @@ Phase 2 candidate work — not started, subject to professor and team feedback:
 - Sidebar persistent on all authenticated pages via shared `AppLayout`
 - `/jobs` list page: empty state, job rows, status badges, result links
 - Active nav state dynamic via `useLocation()`
+
+**Login UI polish + error messages — build-verified only (uncommitted):**
+- `auth.css`: card top accent bar, header/form separator, subtitle pill badge, always-visible input borders, button tactile `:active` state
+- `LoginPage.jsx`: "Unauthorized" → "Incorrect email or password."; "String should have at least 8 characters" → "Password must be at least 8 characters."
 
 ---
 

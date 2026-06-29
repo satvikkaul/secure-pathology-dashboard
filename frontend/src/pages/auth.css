@@ -17,29 +17,39 @@
   max-width: 420px;
   background: var(--c-surface);
   border: 1px solid var(--c-border);
+  border-top: 3px solid var(--c-navy);
   border-radius: 12px;
-  padding: 36px 32px;
-  box-shadow: 0 4px 20px rgba(30, 41, 59, 0.06);
+  padding: 40px 36px;
+  box-shadow: 0 4px 24px rgba(30, 41, 59, 0.08);
 }
 
 /* ── Card header ──────────────────────────────────────────────────────────── */
 .auth-header {
   text-align: center;
-  margin-bottom: 24px;
+  padding-bottom: 24px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--c-border);
 }
 
 .auth-title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--c-navy);
-  letter-spacing: -0.3px;
-  margin-bottom: 6px;
+  letter-spacing: -0.4px;
+  margin-bottom: 10px;
 }
 
 .auth-subtitle {
-  font-size: 13px;
+  display: inline-block;
+  background: var(--c-surface-lo);
+  border: 1px solid var(--c-border);
+  border-radius: 100px;
+  padding: 3px 12px;
+  font-size: 11px;
+  font-weight: 600;
   color: var(--c-text-lo);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
 /* ── Banners ──────────────────────────────────────────────────────────────── */
@@ -67,7 +77,7 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .auth-field {
@@ -85,9 +95,9 @@
 
 .auth-input {
   width: 100%;
-  padding: 10px 12px;
-  background: var(--c-surface-lo);
-  border: 1px solid transparent;
+  padding: 10px 14px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 8px;
   font-size: 15px;
   font-family: inherit;
@@ -109,7 +119,7 @@
 /* ── Submit button ────────────────────────────────────────────────────────── */
 .auth-btn {
   width: 100%;
-  padding: 11px 16px;
+  padding: 12px 16px;
   background: var(--c-navy);
   color: #ffffff;
   border: none;
@@ -119,12 +129,16 @@
   font-family: inherit;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: background 0.15s;
-  margin-top: 4px;
+  transition: background 0.15s, transform 0.1s;
+  margin-top: 10px;
 }
 
 .auth-btn:hover:not(:disabled) {
   background: var(--c-navy-hover);
+}
+
+.auth-btn:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .auth-btn:disabled {
