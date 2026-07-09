@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Pathology Dashboard - Sidebar Layout</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: "#f7f9fb",
+            surface: "#ffffff",
+            "surface-low": "#f2f4f6",
+            "surface-mid": "#e0e3e5",
+            primary: "#091426",
+            "primary-soft": "#1e293b",
+            secondary: "#d0e1fb",
+            text: "#191c1e",
+            muted: "#45474c",
+            outline: "#c5c6cd",
+            success: "#1f5f3a",
+            "success-bg": "#dff4e7"
+          },
+          fontFamily: {
+            sans: ["Hanken Grotesk", "sans-serif"]
+          },
+          boxShadow: {
+            soft: "0 4px 20px rgba(30, 41, 59, 0.06)"
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: "Hanken Grotesk", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(208, 225, 251, 0.55), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(188, 199, 222, 0.35), transparent 30%),
+        #f7f9fb;
+    }
+
+    .sidebar-collapsed {
+      width: 5.5rem;
+    }
+
+    .sidebar-collapsed .sidebar-title-block,
+    .sidebar-collapsed .sidebar-section-label,
+    .sidebar-collapsed .sidebar-link-label,
+    .sidebar-collapsed .sidebar-user-copy,
+    .sidebar-collapsed .sidebar-signout-label {
+      display: none;
+    }
+
+    .sidebar-collapsed .sidebar-brand-row,
+    .sidebar-collapsed .sidebar-footer-box,
+    .sidebar-collapsed .sidebar-link {
+      justify-content: center;
+    }
+
+    .sidebar-collapsed .sidebar-link,
+    .sidebar-collapsed .sidebar-signout {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+
+    .sidebar-collapsed .sidebar-footer-box {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-background text-text">
+  <div class="flex min-h-screen">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-outline bg-white transition-all duration-300 ease-out lg:static lg:translate-x-0">
+      <div class="border-b border-outline px-6 py-6">
+        <div class="sidebar-brand-row flex items-center gap-3">
+          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-soft text-sm font-semibold text-white">
+            SPD
+          </div>
+          <div class="sidebar-title-block">
+            <p class="text-sm font-semibold uppercase tracking-[0.10em] text-muted">Phase 1</p>
+            <h1 class="text-lg font-semibold tracking-[-0.02em] text-primary">Secure Pathology Dashboard</h1>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-1 flex-col px-4 py-5">
+        <div class="mb-4 flex items-center justify-between px-2">
+          <p class="sidebar-section-label text-xs font-semibold uppercase tracking-[0.12em] text-muted">Navigation</p>
+          <button id="sidebar-close" class="rounded-xl border border-outline bg-white p-2 text-muted lg:hidden">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <nav class="space-y-2">
+          <a href="#" class="sidebar-link flex items-center gap-3 rounded-xl bg-secondary px-4 py-3 text-sm font-semibold text-primary">
+            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+            <span class="sidebar-link-label">Dashboard</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted transition hover:bg-surface-low hover:text-primary">
+            <span class="material-symbols-outlined text-[20px]">upload_file</span>
+            <span class="sidebar-link-label">Upload Image</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted transition hover:bg-surface-low hover:text-primary">
+            <span class="material-symbols-outlined text-[20px]">biotech</span>
+            <span class="sidebar-link-label">Analysis Jobs</span>
+          </a>
+        </nav>
+
+        <div class="mt-auto border-t border-outline px-2 pt-5">
+          <div class="sidebar-footer-box mb-4 rounded-2xl bg-surface-low p-4">
+            <p class="text-sm font-semibold text-primary">Satvik Kaul</p>
+            <p class="sidebar-user-copy mt-1 text-sm text-muted">Research Prototype User</p>
+          </div>
+
+          <button class="sidebar-signout flex w-full items-center justify-center gap-2 rounded-xl border border-outline bg-white px-4 py-3 text-sm font-semibold text-muted transition hover:bg-surface-low hover:text-primary">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+            <span class="sidebar-signout-label">Sign Out</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div id="sidebar-overlay" class="fixed inset-0 z-30 hidden bg-slate-950/30 backdrop-blur-[1px] lg:hidden"></div>
+
+    <div class="flex min-h-screen flex-1 flex-col">
+      <header class="border-b border-outline bg-white/80 backdrop-blur-md">
+        <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+          <div class="flex items-center gap-3">
+            <button id="sidebar-open" class="rounded-xl border border-outline bg-white p-2 text-muted transition hover:bg-surface-low lg:hidden">
+              <span class="material-symbols-outlined text-[20px]">menu</span>
+            </button>
+            <button id="sidebar-toggle-desktop" class="hidden rounded-xl border border-outline bg-white p-2 text-muted transition hover:bg-surface-low lg:inline-flex">
+              <span id="sidebar-toggle-icon" class="material-symbols-outlined text-[20px]">left_panel_open</span>
+            </button>
+            <div>
+              <p class="text-sm font-semibold text-primary">Dashboard Overview</p>
+              <p class="text-sm text-muted">Monitor uploads and analysis jobs</p>
+            </div>
+          </div>
+
+          <button class="flex items-center gap-3 rounded-full border border-outline bg-white px-2 py-1.5 transition hover:bg-surface-low">
+            <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-white">
+              SK
+            </div>
+            <span class="hidden text-sm font-medium text-muted sm:inline">Profile</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-8">
+        <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="mb-2 inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+              <span class="material-symbols-outlined text-[16px]">space_dashboard</span>
+              Sidebar Shell
+            </p>
+            <h2 class="text-3xl font-semibold tracking-[-0.02em] text-primary">Dashboard Structure</h2>
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-muted">
+              This version moves account actions into the left rail, keeps only real Phase 1 navigation, and uses the top-right area for a profile placeholder.
+            </p>
+          </div>
+
+          <a href="#" class="rounded-xl bg-primary-soft px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary">
+            Upload Image
+          </a>
+        </div>
+
+        <div class="grid gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+          <section class="rounded-2xl border border-outline bg-white p-5 shadow-soft">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h3 class="text-lg font-semibold text-primary">Recent Uploads</h3>
+                <p class="text-sm text-muted">Latest private images associated with the signed-in user.</p>
+              </div>
+              <span class="rounded-full border border-outline bg-surface-low px-3 py-1 text-xs font-semibold text-muted">3 total</span>
+            </div>
+
+            <div class="space-y-3">
+              <div class="rounded-xl border border-outline bg-surface-low p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="text-sm font-semibold text-primary">Image #41</p>
+                  <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-muted">PNG</span>
+                </div>
+                <p class="mt-2 text-sm text-muted">4.2 MB • Uploaded Jun 26, 2026</p>
+              </div>
+              <div class="rounded-xl border border-outline bg-surface-low p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="text-sm font-semibold text-primary">Image #40</p>
+                  <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-muted">JPG</span>
+                </div>
+                <p class="mt-2 text-sm text-muted">3.8 MB • Uploaded Jun 25, 2026</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-outline bg-white p-5 shadow-soft">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h3 class="text-lg font-semibold text-primary">Analysis Jobs</h3>
+                <p class="text-sm text-muted">Current and recent prototype runs.</p>
+              </div>
+              <span class="rounded-full border border-outline bg-surface-low px-3 py-1 text-xs font-semibold text-muted">2 active</span>
+            </div>
+
+            <div class="space-y-3">
+              <div class="rounded-xl border border-outline bg-surface-low p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="text-sm font-semibold text-primary">Job #12</p>
+                  <span class="rounded-full bg-success-bg px-3 py-1 text-xs font-semibold text-success">Completed</span>
+                </div>
+                <p class="mt-2 text-sm text-muted">placeholder_v1 • Result ready</p>
+              </div>
+              <div class="rounded-xl border border-outline bg-surface-low p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="text-sm font-semibold text-primary">Job #13</p>
+                  <span class="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-primary">Running</span>
+                </div>
+                <p class="mt-2 text-sm text-muted">placeholder_v1 • Processing selected image</p>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="mt-5 rounded-2xl border border-outline bg-white p-5 shadow-soft">
+          <h3 class="text-lg font-semibold text-primary">Why This Structure</h3>
+          <div class="mt-3 grid gap-4 md:grid-cols-3">
+            <div class="rounded-xl bg-surface-low p-4">
+              <p class="text-sm font-semibold text-primary">Sidebar is only for real destinations</p>
+              <p class="mt-2 text-sm leading-6 text-muted">Dashboard, upload, and jobs are enough for Phase 1. No fake reports or settings needed yet.</p>
+            </div>
+            <div class="rounded-xl bg-surface-low p-4">
+              <p class="text-sm font-semibold text-primary">Top-right becomes identity, not logout</p>
+              <p class="mt-2 text-sm leading-6 text-muted">The profile button leaves room for future account actions while reducing visual clutter in the header.</p>
+            </div>
+            <div class="rounded-xl bg-surface-low p-4">
+              <p class="text-sm font-semibold text-primary">Logout belongs in the footer rail</p>
+              <p class="mt-2 text-sm leading-6 text-muted">That keeps navigation at the top and session/account actions anchored in one predictable place.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const openButton = document.getElementById('sidebar-open');
+    const closeButton = document.getElementById('sidebar-close');
+    const desktopToggle = document.getElementById('sidebar-toggle-desktop');
+    const desktopToggleIcon = document.getElementById('sidebar-toggle-icon');
+
+    function openSidebar() {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+    }
+
+    function closeSidebar() {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+    }
+
+    function syncDesktopToggleIcon() {
+      desktopToggleIcon.textContent = sidebar.classList.contains('sidebar-collapsed')
+        ? 'left_panel_open'
+        : 'left_panel_close';
+    }
+
+    openButton.addEventListener('click', openSidebar);
+    closeButton.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+    desktopToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-collapsed');
+      syncDesktopToggleIcon();
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024) {
+        overlay.classList.add('hidden');
+        sidebar.classList.remove('-translate-x-full');
+        syncDesktopToggleIcon();
+      } else {
+        sidebar.classList.add('-translate-x-full');
+      }
+    });
+
+    syncDesktopToggleIcon();
+  </script>
+</body>
+</html>

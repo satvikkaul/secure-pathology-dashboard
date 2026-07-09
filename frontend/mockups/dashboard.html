@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pathology Core Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#8590a6",
+                        "tertiary-fixed": "#fadfb8",
+                        "outline": "#75777d",
+                        "surface": "#f7f9fb",
+                        "surface-container": "#eceef0",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "secondary-fixed": "#d3e4fe",
+                        "tertiary-container": "#35260c",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e0e3e5",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#564427",
+                        "on-tertiary-container": "#a38c6a",
+                        "on-primary-fixed": "#111c2d",
+                        "on-surface": "#191c1e",
+                        "primary": "#091426",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f7f9fb",
+                        "primary-fixed-dim": "#bcc7de",
+                        "tertiary-fixed-dim": "#ddc39d",
+                        "secondary-container": "#d0e1fb",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-low": "#f2f4f6",
+                        "primary-fixed": "#d8e3fb",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-secondary-container": "#54647a",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#c5c6cd",
+                        "surface-tint": "#545f73",
+                        "error": "#ba1a1a",
+                        "primary-container": "#1e293b",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "secondary": "#505f76",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#bcc7de",
+                        "on-surface-variant": "#45474c",
+                        "background": "#f7f9fb",
+                        "tertiary": "#1e1200",
+                        "surface-dim": "#d8dadc",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-tertiary-fixed": "#271902",
+                        "on-background": "#191c1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "md": "16px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "xl": "48px",
+                        "container-max": "1440px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-sm": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "1", "letterSpacing": "0.04em", "fontWeight": "500" }],
+                        "label-md": ["14px", { "lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased flex h-screen overflow-hidden">
+<!-- SideNavBar (from JSON) -->
+<nav class="hidden md:flex flex-col bg-surface-container-low border-r border-outline-variant h-screen w-64 p-md space-y-base flex-shrink-0 z-10 relative">
+<div class="mb-xl flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-lg overflow-hidden shrink-0">
+<img class="object-cover w-full h-full" data-alt="A clean, minimalist logo for a medical research laboratory. The logo features a subtle geometric abstraction of a microscope or cellular structure, utilizing soft blues and slates on a pure white background. The aesthetic is clinical, precise, and professional, perfectly suited for a high-end pathology software interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7p1bYGSbncKYJGB3RSnfli637P7CHqILYLk125iG6A8D9swkwuOXeBE4XNmSlo6Dl9VVLXJJnoogV4QY2XsdHI8uund10rCbuYltroRMBo7nO-2XQRtEWfYoHuFW9n1VQA_oHGpbsQ7xSzVMPn8HxALsCRRfh-EOUZeEjiwUTQY5yzn1qaXMV8dNJ9cQnUuQTDUW9S3S8pWmHCv8kWfBm_PBLBcu6U5_ODb-HHc3AYaKndFpmoQ8kBYYGfCMUBnSyCA_XzxIVPfWH"/>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">Clinical Trial A-42</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Last activity: 2 mins ago</p>
+</div>
+</div>
+<div class="flex-grow space-y-2">
+<!-- Active Tab -->
+<a class="flex items-center space-x-3 px-3 py-2 bg-secondary-container text-on-secondary-container font-semibold rounded-lg scale-[0.99] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-highest transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="upload_file">upload_file</span>
+<span class="font-label-md text-label-md">Upload Image</span>
+</a>
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-highest transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="description">description</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</div>
+<div class="mt-auto space-y-2 pt-4 border-t border-outline-variant">
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-highest transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-highest transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="contact_support">contact_support</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<button class="w-full mt-4 bg-primary-container text-on-primary hover:opacity-90 transition-opacity py-2 px-4 rounded-lg font-label-md text-label-md flex items-center justify-center space-x-2">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>New Analysis</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<div class="flex-grow flex flex-col h-screen overflow-hidden relative">
+<!-- TopAppBar (from JSON) -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-lg py-sm shrink-0 z-10 relative">
+<div class="flex items-center space-x-4">
+<!-- Mobile menu button (hidden on md) -->
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">Pathology Core</h1>
+</div>
+<div class="flex-grow max-w-md mx-8 hidden md:block">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-on-surface-variant text-sm pointer-events-none">search</span>
+<input class="w-full bg-surface-container text-on-surface rounded-full py-1.5 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-surface transition-all border-none placeholder:text-on-surface-variant" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<div class="flex items-center space-x-3 hidden sm:flex">
+<button class="text-on-surface-variant hover:text-primary transition-colors relative" title="notifications">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors" title="settings">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" title="Help">Help</button>
+</div>
+<div class="flex items-center space-x-3 pl-4 border-l border-outline-variant">
+<button class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md hidden sm:block">Sign Out</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A small, professional portrait photograph of a medical researcher to be used as a user profile thumbnail. The subject should have a neutral, focused expression, set against a clean, softly lit, light gray background. The lighting should be soft and even, typical of a modern laboratory environment, ensuring a calm and precise aesthetic suitable for a high-end UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAerS44W3BsoLMuavBgZOmenDaCJ1FgcTCQnMdJZ6mSnv7TWO76-KDk92N_RFhpK1njf4e0tr5zUXGDjJNepbtfMKCXI45x8dhzPq_9GU45mhNRC-LD-mgCyA3DhSNtgSvkPpMid7ZIPhJeOCgTwFQzS8_-RxtwuqwDkh-peBfbXw07V8t50csyiVaeJsAUw3Rn9OazHvQpqZPSjiC0e1Gmwt6VD9yD0ewHcU7ep_BCsJWPJAxhGqDGtImfS0Mv4rit7QmgEVYJ3E6k"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Summary Strip -->
+<div class="bg-surface-container-lowest border-b border-surface-container px-lg py-2 flex items-center justify-between text-xs text-on-surface-variant shrink-0 relative z-0">
+<div class="flex space-x-6 font-label-sm text-label-sm">
+<span><strong class="font-semibold text-on-surface">Signed in as:</strong> Satvik Kaul</span>
+<span><strong class="font-semibold text-on-surface">Status:</strong> Phase 1 Prototype</span>
+</div>
+<div class="font-label-sm text-label-sm">
+<span><strong class="font-semibold text-on-surface">Last activity:</strong> Oct 24</span>
+</div>
+</div>
+<!-- Scrollable Content Area -->
+<main class="flex-grow overflow-y-auto p-lg pb-32">
+<div class="max-w-container-max mx-auto space-y-xl">
+<!-- Primary Action Area -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Dashboard overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 max-w-2xl">Monitor recent slide uploads and active computational analysis jobs.</p>
+</div>
+<button class="bg-primary-container text-on-primary hover:opacity-90 transition-opacity py-3 px-6 rounded-lg font-label-md text-label-md flex items-center shadow-sm">
+<span class="material-symbols-outlined mr-2" data-weight="fill">cloud_upload</span>
+                        Upload New Image
+                    </button>
+</div>
+<!-- Empty State Card (Visible for new users/no data context) -->
+<!-- Note: In a real app, this would be toggled via JS based on data presence. Showing it here as requested. -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-xl flex flex-col items-center justify-center text-center shadow-[0_4px_20px_rgba(30,41,59,0.04)]">
+<div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant" data-weight="fill">image</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">No active analyses</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md mb-6">Your workspace is currently empty. The first step is to upload a high-resolution slide image for processing.</p>
+<button class="bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface transition-colors py-2 px-4 rounded-lg font-label-md text-label-md">
+                        Learn about supported formats
+                    </button>
+</div>
+<!-- Two Column Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
+<!-- Left Column: Recent Uploads -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0_4px_20px_rgba(30,41,59,0.04)] overflow-hidden flex flex-col">
+<div class="p-md border-b border-surface-container flex justify-between items-center bg-surface-bright">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Recent Uploads</h3>
+<button class="text-on-surface-variant hover:text-primary font-label-sm text-label-sm transition-colors">View All</button>
+</div>
+<div class="overflow-x-auto flex-grow">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-surface-container font-label-sm text-label-sm text-on-surface-variant bg-surface-bright">
+<th class="p-md font-medium">Image ID</th>
+<th class="p-md font-medium">Date</th>
+<th class="p-md font-medium text-right">Status</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface">
+<tr class="border-b border-surface-container hover:bg-surface-container-low transition-colors group">
+<td class="p-md">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 bg-surface-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-on-surface-variant">image</span>
+</div>
+<span class="font-medium group-hover:text-primary transition-colors">SLD-2024-081</span>
+</div>
+</td>
+<td class="p-md text-on-surface-variant">Oct 24, 09:12</td>
+<td class="p-md text-right">
+<span class="inline-flex items-center px-2 py-1 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm border border-outline-variant/50">
+                                                Verified
+                                            </span>
+</td>
+</tr>
+<tr class="border-b border-surface-container hover:bg-surface-container-low transition-colors group">
+<td class="p-md">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 bg-surface-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-on-surface-variant">image</span>
+</div>
+<span class="font-medium group-hover:text-primary transition-colors">SLD-2024-080</span>
+</div>
+</td>
+<td class="p-md text-on-surface-variant">Oct 23, 14:45</td>
+<td class="p-md text-right">
+<span class="inline-flex items-center px-2 py-1 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm border border-outline-variant/50">
+                                                Verified
+                                            </span>
+</td>
+</tr>
+<tr class="border-b border-surface-container hover:bg-surface-container-low transition-colors group">
+<td class="p-md">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 bg-surface-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-on-surface-variant">image_not_supported</span>
+</div>
+<span class="font-medium group-hover:text-primary transition-colors">SLD-2024-079</span>
+</div>
+</td>
+<td class="p-md text-on-surface-variant">Oct 22, 11:30</td>
+<td class="p-md text-right">
+<span class="inline-flex items-center px-2 py-1 rounded bg-error-container/30 text-on-error-container font-label-sm text-label-sm border border-error-container/50">
+                                                Format Error
+                                            </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Right Column: Recent Analysis Jobs -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0_4px_20px_rgba(30,41,59,0.04)] overflow-hidden flex flex-col">
+<div class="p-md border-b border-surface-container flex justify-between items-center bg-surface-bright">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Recent Analysis Jobs</h3>
+<button class="text-on-surface-variant hover:text-primary font-label-sm text-label-sm transition-colors">View All</button>
+</div>
+<div class="flex-grow p-0">
+<ul class="divide-y divide-surface-container">
+<!-- Running Job -->
+<li class="p-md hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Cellular Density Map (SLD-2024-081)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Algorithm: Core-V3-Alpha</p>
+</div>
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/50 text-on-secondary-container font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5 animate-pulse"></span>
+                                            Running
+                                        </span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1 mt-3">
+<div class="bg-secondary h-1 rounded-full" style="width: 45%"></div>
+</div>
+</li>
+<!-- Pending Job -->
+<li class="p-md hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Tissue Segmentation (SLD-2024-080)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Algorithm: Seg-Net-Base</p>
+</div>
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[12px] mr-1">schedule</span>
+                                            Pending
+                                        </span>
+</div>
+</li>
+<!-- Completed Job -->
+<li class="p-md hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Nuclei Count (SLD-2024-075)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Completed: Oct 23, 10:05</p>
+</div>
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-[#f1f5f9] text-[#64748b] font-label-sm text-label-sm border border-[#e2e8f0]">
+<span class="material-symbols-outlined text-[12px] mr-1">check_circle</span>
+                                            Completed
+                                        </span>
+</div>
+</li>
+<!-- Failed Job -->
+<li class="p-md hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Anomaly Detection (SLD-2024-070)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Failed: Oct 21, 16:22</p>
+</div>
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-error-container/30 text-on-error-container font-label-sm text-label-sm border border-error-container/50">
+<span class="material-symbols-outlined text-[12px] mr-1">error</span>
+                                            Failed
+                                        </span>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (from JSON) -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant flex flex-col md:flex-row justify-between items-center w-full px-lg py-md absolute bottom-0 left-0 right-0 z-10 shrink-0">
+<div class="text-on-surface-variant font-label-sm text-label-sm mb-4 md:mb-0">
+                © 2024 Pathology Core. Prototype only, not for clinical use.
+            </div>
+<div class="flex space-x-6">
+<a class="text-on-surface-variant hover:text-primary font-label-sm text-label-sm transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary font-label-sm text-label-sm transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary font-label-sm text-label-sm transition-colors" href="#">Security Protocols</a>
+</div>
+</footer>
+</div>
+</body></html>
