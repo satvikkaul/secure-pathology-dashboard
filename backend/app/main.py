@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import inspect
 from .database import Base, engine, SessionLocal
 from . import models
+from .algorithms import REGISTRY
 from .routers import auth, images, algorithms, jobs, profile
 
 
@@ -26,23 +27,44 @@ def verify_schema():
             )
 
 
+_SYNCED_FIELDS = (
+    "display_name", "description", "version",
+    "result_type", "input_requirements", "experimental",
+)
+
+
+def sync_algorithms(db):
+    """Make the `algorithms` table a projection of the code registry.
+
+    Upserts per name (a plain "seed if table empty" guard would silently never
+    add a second algorithm) and drops rows no longer in the registry, so the
+    dropdown can never offer something the dispatcher cannot run. Jobs store
+    `algorithm_name` as a string, so removing a catalog row keeps old jobs intact.
+    """
+    existing = {a.name: a for a in db.query(models.Algorithm).all()}
+
+    for spec in REGISTRY.values():
+        row = existing.get(spec.name)
+        if row is None:
+            row = models.Algorithm(name=spec.name)
+            db.add(row)
+        for field in _SYNCED_FIELDS:
+            setattr(row, field, getattr(spec, field))
+
+    for name, row in existing.items():
+        if name not in REGISTRY:
+            db.delete(row)
+
+    db.commit()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     verify_schema()
     db = SessionLocal()
     try:
-        if not db.query(models.Algorithm).first():
-            db.add(models.Algorithm(
-                name="placeholder_v1",
-                display_name="Placeholder Classifier v1",
-                description="Synthetic placeholder for Phase 1 demo. Returns mock classification results.",
-                version="1.0.0",
-                result_type="classification",
-                input_requirements="JPG/PNG, max 10 MB",
-                experimental=True,
-            ))
-            db.commit()
+        sync_algorithms(db)
     finally:
         db.close()
     yield

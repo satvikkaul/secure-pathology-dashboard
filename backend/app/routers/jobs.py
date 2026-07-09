@@ -3,17 +3,13 @@ import logging
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from .. import models, schemas
+from .. import models, schemas, storage
 from ..dependencies import get_current_user, get_db
-from ..algorithms.placeholder import run as run_placeholder
+from ..algorithms import REGISTRY
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
-
-ALGORITHM_REGISTRY: dict[str, callable] = {
-    "placeholder_v1": run_placeholder,
-}
 
 
 @router.post("/", response_model=schemas.JobOut, status_code=status.HTTP_201_CREATED)
@@ -30,7 +26,7 @@ def submit_job(
     if not image:
         raise HTTPException(status_code=404, detail="Image not found")
 
-    if payload.algorithm_name not in ALGORITHM_REGISTRY:
+    if payload.algorithm_name not in REGISTRY:
         raise HTTPException(status_code=422, detail="Unknown algorithm")
 
     job = models.AlgorithmJob(
@@ -44,7 +40,8 @@ def submit_job(
     db.refresh(job)
 
     try:
-        result = ALGORITHM_REGISTRY[payload.algorithm_name](image_id=image.id)
+        # Algorithms receive only the path to this user's own stored image.
+        result = REGISTRY[payload.algorithm_name].run(storage.image_path(image.stored_filename))
         # Validate the envelope contract before storage; a malformed envelope is
         # a programming error in the algorithm adapter and lands in the except
         # below (job failed, safe note stored) — it never reaches the frontend.

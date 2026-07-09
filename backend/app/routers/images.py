@@ -2,7 +2,6 @@ import io
 import logging
 import os
 import uuid
-from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from PIL import Image as PILImage
@@ -10,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from .. import models, schemas
 from ..dependencies import get_current_user, get_db
+from ..storage import get_upload_dir
 
 logger = logging.getLogger(__name__)
 
@@ -18,20 +18,7 @@ ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 ALLOWED_PIL_FORMATS = {"JPEG", "PNG"}
 _CHUNK_SIZE = 64 * 1024  # 64 KB per read call
 
-# Resolve upload dir relative to backend/ so the path is stable regardless of
-# the working directory uvicorn is launched from.
-_BACKEND_DIR = Path(__file__).resolve().parents[2]
-
 router = APIRouter(prefix="/images", tags=["images"])
-
-
-def _get_upload_dir() -> Path:
-    raw = os.getenv("UPLOAD_DIR", "uploads")
-    path = Path(raw)
-    if not path.is_absolute():
-        path = _BACKEND_DIR / path
-    path.mkdir(parents=True, exist_ok=True)
-    return path
 
 
 async def _read_upload(file: UploadFile, max_bytes: int) -> bytes:
@@ -81,7 +68,7 @@ async def upload_image(
     _verify_image(contents)
 
     stored_name = f"{uuid.uuid4()}{ext}"
-    dest = _get_upload_dir() / stored_name
+    dest = get_upload_dir() / stored_name
     dest.write_bytes(contents)
 
     image = models.Image(
