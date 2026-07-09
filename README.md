@@ -1,10 +1,11 @@
 # Secure Pathology Dashboard
 
-> **Research Prototype — Phase 1**
->
-> This software is a local workflow validation prototype. It is **not approved for clinical use**, **not validated for diagnostic purposes**, and **must not be used with real patient data** in any form. No HIPAA, PIPEDA, or PHIPA compliance certification is claimed or implied. All testing must use synthetic or publicly available sample images only.
-
----
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-3-003B57?logo=sqlite&logoColor=white)
+![Status](https://img.shields.io/badge/status-research%20prototype-orange)
 
 ## Overview
 
@@ -12,19 +13,29 @@ Secure Pathology Dashboard is a web-based prototype that allows authenticated us
 
 This project is a research prototype built to validate the end-to-end dashboard workflow before real algorithm integration or cloud deployment.
 
+### Workflow at a glance
+
+```text
+Register → Log in → Onboarding → Upload image → Select algorithm → Run job → View report
+```
+
 ---
 
-## Phase 1 Purpose
+## Screenshots
 
-Phase 1 establishes and validates the full user-facing workflow in a local environment:
+> Images below were captured against the running local prototype using a **synthetic, computer-generated tissue patch**. No real or de-identified patient data is used anywhere in this project.
 
-- Authentication (registration, login, protected routes, logout)
-- Image upload with server-side validation
-- Algorithm selection and synchronous job submission
-- Result retrieval and report display
-- Per-user data isolation enforced at the API level
+### Upload Image
 
-The algorithm in Phase 1 is a synchronous placeholder that returns a synthetic result. No real AI inference is performed. The purpose is to confirm the platform architecture and UX flow before integrating real models or moving to cloud infrastructure.
+Drag-and-drop upload with step indicators, server-validated file constraints, and prototype-model selection.
+
+![Upload Image screen](assets/screenshots/upload-image.png)
+
+### Analysis Result
+
+Generated report for a completed job: predicted class, confidence, structured findings, and persistent non-clinical disclaimers.
+
+![Analysis Result screen](assets/screenshots/analysis-result.png)
 
 ---
 
@@ -38,34 +49,6 @@ The algorithm in Phase 1 is a synchronous placeholder that returns a synthetic r
 - **Placeholder analysis job** submitted synchronously; result stored inline on the job record
 - **Synthetic result report** displaying prediction label, confidence score, and generated findings
 - **Per-user data isolation**: users cannot read, list, or access another user's images or jobs
-
----
-
-## Phase 1 Limits
-
-- **Local prototype only.** No cloud infrastructure, no remote deployment.
-- **No real patient data.** Only synthetic or publicly available sample images may be used.
-- **No clinical or diagnostic use.** Results are synthetic and carry no medical meaning.
-- **No real AI inference.** The algorithm is a placeholder returning fixed synthetic output.
-- **No production deployment security model.** JWT tokens are stored in `localStorage` (acceptable for local prototyping; `httpOnly` cookies are preferred for any deployed environment).
-- **No formal compliance certification.** HIPAA, PIPEDA, and PHIPA requirements are not addressed in this phase.
-
----
-
-## Out of Scope (Phase 1)
-
-- Cloud deployment (AWS Canada, Azure Canada, or any remote environment)
-- PostgreSQL or any managed database
-- Celery, Redis, or any asynchronous job queue
-- Docker or containerised algorithm execution
-- Real algorithm integration (Gleason grading, tissue classification, nuclei segmentation, etc.)
-- Whole-slide image (WSI) format support (.svs, .ndpi, .tiff)
-- Admin roles or admin dashboards
-- File download functionality
-- Multi-factor authentication (MFA) or single sign-on (SSO)
-- `httpOnly` secure cookies
-- Real or de-identified patient data
-- Formal HIPAA / PIPEDA / PHIPA compliance certification
 
 ---
 
@@ -87,27 +70,33 @@ The algorithm in Phase 1 is a synchronous placeholder that returns a synthetic r
 
 ```
 secure-pathology-dashboard/
+├── assets/
+│   └── screenshots/             — README screenshots
 ├── backend/
 │   ├── app/
 │   │   ├── algorithms/          — placeholder algorithm (synchronous, synthetic output)
-│   │   ├── routers/             — auth, images, algorithms, jobs
+│   │   ├── routers/             — auth, images, algorithms, jobs, profile
 │   │   ├── auth.py              — bcrypt hashing, JWT creation and decoding
 │   │   ├── database.py          — SQLite engine, SessionLocal, Base
 │   │   ├── dependencies.py      — get_db, get_current_user
-│   │   ├── main.py              — FastAPI app, lifespan (creates tables, seeds algorithm)
+│   │   ├── main.py              — FastAPI app, lifespan (tables, seed, schema check)
 │   │   ├── models.py            — User, Image, Algorithm, AlgorithmJob ORM models
-│   │   └── schemas.py           — Pydantic request/response schemas
+│   │   └── schemas.py           — Pydantic schemas, incl. the result envelope
 │   ├── uploads/                 — private upload storage (outside web root)
+│   ├── test_envelope.py         — result-envelope contract self-check
+│   ├── test_profile.py          — profile/org-lock guard self-check
 │   ├── .env.example             — environment variable template
 │   └── requirements.txt
-├── docs/                        — project context, decisions, assumptions, session log
 ├── frontend/
 │   ├── mockups/                 — static HTML reference mockups (not shipped)
 │   ├── src/
-│   │   ├── api/                 — fetch wrappers: auth, images, algorithms, jobs
-│   │   ├── components/          — AppLayout (shared shell), ProtectedRoute
-│   │   ├── context/             — AuthContext (token + user state)
-│   │   └── pages/               — Login, Register, Dashboard, Upload, Jobs, JobResult
+│   │   ├── api/                 — fetch wrappers: auth, images, algorithms, jobs, profile
+│   │   ├── components/          — AppLayout, ProtectedRoute, OnboardingGuard
+│   │   ├── context/             — AuthContext (token + user + profile state)
+│   │   ├── pages/               — Login, Register, Onboarding, Dashboard, Upload,
+│   │   │                          Jobs, JobResult, Profile
+│   │   ├── results/             — result_type → report template registry
+│   │   └── utils/               — shared helpers (UTC-safe date formatting)
 │   └── vite.config.js           — dev proxy: /api/* → localhost:8000
 └── README.md
 ```
@@ -196,14 +185,16 @@ npm run dev
 1. Open http://localhost:5173 in a browser.
 2. Click **Create Account** and register with a name, email, and password (minimum 8 characters).
 3. After registration, log in with the same credentials.
-4. The **Dashboard** shows your uploaded images and submitted analysis jobs (empty on first login).
-5. Click **Upload Image** in the sidebar.
-6. Drag and drop or select a JPG or PNG file (maximum 10 MB).
-7. Select the **Placeholder Analysis v1** algorithm from the dropdown.
-8. Click **Upload and Run**. The job is submitted and executed synchronously.
-9. The **Job Result** page displays the synthetic report: prediction label, confidence score, and generated findings.
-10. Click **Analysis Jobs** in the sidebar to review all submitted jobs.
-11. Click **Sign Out** to log out and confirm the session is cleared.
+4. On first login you are routed to **Onboarding**. Select a role (required); organisation fields are optional. Click **Continue to Dashboard**.
+5. The **Dashboard** shows your uploaded images and submitted analysis jobs (empty on first login).
+6. Click **Upload Image** in the sidebar.
+7. Drag and drop or select a JPG or PNG file (maximum 10 MB).
+8. Select the **Placeholder Classifier v1** algorithm from the dropdown.
+9. Click **Upload and Run**. The job is submitted and executed synchronously.
+10. The **Analysis Result** page displays the synthetic report: predicted class, confidence score, and generated findings.
+11. Click **Analysis Jobs** in the sidebar to review all submitted jobs.
+12. Click **My Profile** to view account details and optionally confirm-and-lock your organisation context.
+13. Click **Sign Out** to log out and confirm the session is cleared.
 
 ---
 
@@ -216,7 +207,7 @@ npm run dev
 - Jobs: submit (201, `status: completed`, `result_summary` populated); list (200); get by ID (200)
 - Per-user isolation: User B receives 404 on User A's image and job IDs; User B's list endpoints return empty
 
-**Frontend** — verified via Playwright (41/41 checks, commit `0b1e51d`):
+**Frontend** — verified via Playwright (41/41 checks):
 - Register → login → dashboard → upload → job result flow end-to-end
 - 401 in-memory logout: expired or invalid token clears session without page reload
 - Protected routes block unauthenticated access
@@ -224,31 +215,24 @@ npm run dev
 - Error messages surface correctly (duplicate email, wrong password, Pydantic validation errors)
 - Sidebar: collapse/expand on desktop, mobile drawer, active nav state, Sign Out
 
-**UI Polish Session 3** — build-verified (39 modules, 0 warnings, commit `0fd801d`):
+**Shared shell** — build-verified (0 warnings):
 - Sidebar persistent across Dashboard, Upload, Jobs, and Job Result pages via shared `AppLayout`
 - Jobs list page (`/jobs`) with status badges and result links
 - Sidebar toggle button relocated inside sidebar brand area
 
----
+Backend self-checks run without a test framework:
 
-## Screenshots
-
-_Screenshots will be added prior to the professor demo._
-
-| Screen | Description |
-|---|---|
-| Login | Authentication page |
-| Register | Account creation page |
-| Dashboard | Image and job summary cards |
-| Upload Image | Drag-and-drop upload with step indicators |
-| Jobs List | Full job history with status badges |
-| Job Result Report | Synthetic prediction, confidence, and findings |
+```bash
+cd backend && source venv/bin/activate
+python test_envelope.py    # result-envelope contract
+python test_profile.py     # profile / org-lock guards
+```
 
 ---
 
-## Phase 2 Direction
+## Future Direction
 
-Phase 2 planning will begin after Phase 1 is reviewed. Possible directions include:
+Nothing below is committed scope. Possible directions include:
 
 - **Real model integration** — replacing the placeholder with a validated algorithm (e.g., tissue classification or nuclei segmentation) using appropriate compute infrastructure
 - **Cloud architecture** — evaluating deployment to a Canadian cloud environment (AWS Canada or Azure Canada) with private storage and encrypted transit
@@ -256,4 +240,4 @@ Phase 2 planning will begin after Phase 1 is reviewed. Possible directions inclu
 - **Role-based access** — adding an admin role if required, with a defined policy on whether admins can access user data
 - **Larger image format support** — whole-slide image (.svs, .ndpi) handling via OpenSlide with tiling, if required by the algorithm
 
-No Phase 2 scope is committed. Decisions will be made in consultation with the supervising team and subject to any applicable ethics or data governance requirements.
+Decisions will be made in consultation with the supervising team and subject to any applicable ethics or data governance requirements.
