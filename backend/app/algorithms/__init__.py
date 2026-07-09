@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Callable
 
 from .placeholder import run as _run_placeholder
+from .quality_check import run as _run_quality_check
 
 
 @dataclass(frozen=True)
@@ -50,6 +51,18 @@ REGISTRY: dict[str, AlgorithmSpec] = {
             version="1.0.0",
             result_type="classification",
             run=_run_placeholder,
+        ),
+        AlgorithmSpec(
+            name="quality_check_v1",
+            display_name="Tissue Quality Check v1",
+            description=(
+                "Lightweight image-quality heuristic. Computes sharpness, brightness "
+                "and tissue coverage from the uploaded pixels. Classical image "
+                "statistics, not machine learning; carries no diagnostic meaning."
+            ),
+            version="1.0.0",
+            result_type="quality_check",
+            run=_run_quality_check,
         ),
     )
 }

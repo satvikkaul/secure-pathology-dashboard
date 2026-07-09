@@ -31,11 +31,17 @@ Drag-and-drop upload with step indicators, server-validated file constraints, an
 
 ![Upload Image screen](assets/screenshots/upload-image.png)
 
-### Analysis Result
+### Analysis Result — classification
 
 Generated report for a completed job: predicted class, confidence, structured findings, and persistent non-clinical disclaimers.
 
 ![Analysis Result screen](assets/screenshots/analysis-result.png)
+
+### Analysis Result — tissue quality check
+
+A different algorithm produces a different report. `quality_check_v1` computes sharpness, brightness, and tissue coverage from the uploaded pixels, so its output changes with the image. The report page selects the layout from the result type; it hard-codes nothing about either algorithm.
+
+![Tissue Quality Check result screen](assets/screenshots/quality-check-result.png)
 
 ---
 
@@ -45,9 +51,12 @@ Generated report for a completed job: predicted class, confidence, structured fi
 - **Login and logout** with JWT-based authentication; protected routes redirect unauthenticated users
 - **Authenticated dashboard** showing the user's uploaded images and submitted jobs
 - **Pathology image upload** (JPG/PNG, ≤ 10 MB) with server-side type, size, and image-byte validation
-- **Algorithm selection** from a registered algorithm list
-- **Placeholder analysis job** submitted synchronously; result stored inline on the job record
-- **Synthetic result report** displaying prediction label, confidence score, and generated findings
+- **Algorithm selection** from a registered algorithm list, declared in one place in code
+- **Two algorithms** with different output shapes:
+  - `placeholder_v1` — a synthetic stub returning a fixed classification (no real processing)
+  - `quality_check_v1` — a lightweight heuristic computing sharpness, brightness, and tissue coverage from the uploaded pixels. Classical image statistics, **not machine learning**: no model, no inference. Its output changes with the image.
+- **Analysis job** submitted synchronously; the result is validated against a common envelope before being stored
+- **Report templates** chosen by result type, with a safe generic fallback for any algorithm that has no dedicated layout yet
 - **Per-user data isolation**: users cannot read, list, or access another user's images or jobs
 
 ---
@@ -74,16 +83,19 @@ secure-pathology-dashboard/
 │   └── screenshots/             — README screenshots
 ├── backend/
 │   ├── app/
-│   │   ├── algorithms/          — placeholder algorithm (synchronous, synthetic output)
+│   │   ├── algorithms/          — registry (single source of truth) + algorithms
 │   │   ├── routers/             — auth, images, algorithms, jobs, profile
 │   │   ├── auth.py              — bcrypt hashing, JWT creation and decoding
 │   │   ├── database.py          — SQLite engine, SessionLocal, Base
 │   │   ├── dependencies.py      — get_db, get_current_user
-│   │   ├── main.py              — FastAPI app, lifespan (tables, seed, schema check)
+│   │   ├── main.py              — FastAPI app, lifespan (tables, sync, schema check)
 │   │   ├── models.py            — User, Image, Algorithm, AlgorithmJob ORM models
-│   │   └── schemas.py           — Pydantic schemas, incl. the result envelope
+│   │   ├── schemas.py           — Pydantic schemas, incl. the result envelope
+│   │   └── storage.py           — private upload-path resolution
 │   ├── uploads/                 — private upload storage (outside web root)
-│   ├── test_envelope.py         — result-envelope contract self-check
+│   ├── test_envelope.py         — result-envelope schema self-check
+│   ├── test_registry.py         — algorithm registry + input-contract self-check
+│   ├── test_quality_check.py    — quality_check_v1 behaviour self-check
 │   ├── test_profile.py          — profile/org-lock guard self-check
 │   ├── .env.example             — environment variable template
 │   └── requirements.txt
@@ -189,9 +201,9 @@ npm run dev
 5. The **Dashboard** shows your uploaded images and submitted analysis jobs (empty on first login).
 6. Click **Upload Image** in the sidebar.
 7. Drag and drop or select a JPG or PNG file (maximum 10 MB).
-8. Select the **Placeholder Classifier v1** algorithm from the dropdown.
+8. Select an algorithm from the dropdown — **Placeholder Classifier v1** (fixed synthetic output) or **Tissue Quality Check v1** (real metrics computed from your image).
 9. Click **Upload and Run**. The job is submitted and executed synchronously.
-10. The **Analysis Result** page displays the synthetic report: predicted class, confidence score, and generated findings.
+10. The **Analysis Result** page displays the generated report, laid out according to the algorithm's result type. Try the quality check with a sharp image and a blurry one to see the metrics change.
 11. Click **Analysis Jobs** in the sidebar to review all submitted jobs.
 12. Click **My Profile** to view account details and optionally confirm-and-lock your organisation context.
 13. Click **Sign Out** to log out and confirm the session is cleared.
@@ -224,8 +236,10 @@ Backend self-checks run without a test framework:
 
 ```bash
 cd backend && source venv/bin/activate
-python test_envelope.py    # result-envelope contract
-python test_profile.py     # profile / org-lock guards
+python test_envelope.py       # result-envelope schema
+python test_registry.py       # algorithm registry + input contract
+python test_quality_check.py  # quality_check_v1 tracks the actual image
+python test_profile.py        # profile / org-lock guards
 ```
 
 ---
