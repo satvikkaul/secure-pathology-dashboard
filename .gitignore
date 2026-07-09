@@ -17,6 +17,7 @@ frontend/.env
 
 # Database
 *.db
+backend/pathology.db
 *.sqlite3
 
 # Uploads — keep .gitkeep, ignore everything else
@@ -33,6 +34,6 @@ frontend/node_modules/
 .DS_Store
 Thumbs.db
 
-
-# Assistant/editor local config
+# Local docs and assistant/editor config
+docs/
 .claude/
