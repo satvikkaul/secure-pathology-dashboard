@@ -9,7 +9,7 @@ import './OnboardingPage.css'
 const ROLES = ['Physician', 'Pathologist', 'Researcher', 'Lab Staff', 'Student / Trainee', 'Other']
 
 function OnboardingPage() {
-  const { profile, onboardingCompleted, applyProfile } = useAuth()
+  const { profile, onboardingCompleted, applyProfile, markJustOnboarded } = useAuth()
   const navigate = useNavigate()
 
   // Prefill from any already-saved values so a stray resubmit can't null them out.
@@ -40,6 +40,10 @@ function OnboardingPage() {
         department: department || null,
         intended_use: intendedUse || null,
       })
+      // Set the flag BEFORE applyProfile: applyProfile flips onboardingCompleted,
+      // which trips this page's own <Navigate to="/dashboard"> on re-render — the
+      // flag must already be in context so the wall reads it either way.
+      markJustOnboarded()
       applyProfile(updated)
       navigate('/dashboard', { replace: true })
     } catch (err) {
