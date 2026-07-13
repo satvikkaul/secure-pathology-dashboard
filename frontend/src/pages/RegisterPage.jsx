@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { register } from '../api/auth'
+import { register, login as apiLogin } from '../api/auth'
+import { useAuth } from '../context/AuthContext'
 import './auth.css'
 
 function RegisterPage() {
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -33,7 +35,16 @@ function RegisterPage() {
     setIsSubmitting(true)
     try {
       await register(fullName.trim(), email, password)
-      navigate('/login', { state: { registered: true } })
+      // Sign the new user straight in (login issues a token regardless of
+      // approval) so they flow into onboarding → approval wall without a manual
+      // sign-in. If auto-login somehow fails, fall back to the login page.
+      try {
+        const { access_token } = await apiLogin(email, password)
+        await login(access_token)
+        navigate('/dashboard') // OnboardingGuard routes them to /onboarding
+      } catch {
+        navigate('/login')
+      }
     } catch (err) {
       setError(err.message)
     } finally {

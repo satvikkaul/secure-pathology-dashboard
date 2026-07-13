@@ -10,14 +10,22 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null)
   const [profileError, setProfileError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  // True only in the window between finishing onboarding and being approved, so
+  // the wall can greet a brand-new user ("Request Received") differently from a
+  // returning unapproved one. Kept in context (not router state) because
+  // OnboardingPage's own redirect would otherwise drop a location-state flag.
+  const [justOnboarded, setJustOnboarded] = useState(false)
 
   // Derived, never mirrored in state, so it can't desync from the loaded profile.
   const onboardingCompleted = profile?.onboarding_completed ?? false
+  const isApproved = profile?.is_approved ?? false
+  const isAdmin = profile?.is_admin ?? false
 
   // getMe() success = valid token. getProfile() is fetched separately: a
   // getProfile() failure keeps the user logged in but flags profileError, so a
   // transient 500 does NOT get misread as "not onboarded" and misroute them.
   async function loadSession() {
+    setJustOnboarded(false) // a fresh login is never "just onboarded"
     const me = await getMe() // throws → caller treats token as stale
     setUser(me)
     try {
@@ -67,6 +75,7 @@ export function AuthProvider({ children }) {
     setUser(null)
     setProfile(null)
     setProfileError(false)
+    setJustOnboarded(false)
   }
 
   // Profile-mutating endpoints (PUT /me, POST lock-org) return the full updated
@@ -76,6 +85,10 @@ export function AuthProvider({ children }) {
     setProfile(p)
     setProfileError(false)
   }
+
+  // OnboardingPage calls this right after saving, so the wall shows the
+  // brand-new-user wording. Cleared on the next login/logout.
+  const markJustOnboarded = () => setJustOnboarded(true)
 
   return (
     <AuthContext.Provider
@@ -87,9 +100,13 @@ export function AuthProvider({ children }) {
         isAuthenticated: !!user,
         isLoading,
         onboardingCompleted,
+        isApproved,
+        isAdmin,
+        justOnboarded,
         login,
         logout,
         applyProfile,
+        markJustOnboarded,
       }}
     >
       {children}

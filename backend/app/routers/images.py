@@ -8,7 +8,7 @@ from PIL import Image as PILImage
 from sqlalchemy.orm import Session
 
 from .. import models, schemas
-from ..dependencies import get_current_user, get_db
+from ..dependencies import get_approved_user, get_db
 from ..storage import get_upload_dir
 
 logger = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ def _verify_image(contents: bytes) -> None:
 async def upload_image(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_approved_user),
 ):
     ext = os.path.splitext(file.filename or "")[-1].lower()
     if file.content_type not in ALLOWED_CONTENT_TYPES or ext not in ALLOWED_EXTENSIONS:
@@ -91,7 +91,7 @@ async def upload_image(
 @router.get("/", response_model=list[schemas.ImageOut])
 def list_images(
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_approved_user),
 ):
     return (
         db.query(models.Image)
@@ -105,7 +105,7 @@ def list_images(
 def get_image(
     image_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_approved_user),
 ):
     image = (
         db.query(models.Image)

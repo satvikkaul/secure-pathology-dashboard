@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import OnboardingGuard from './components/OnboardingGuard'
+import ApprovalGuard from './components/ApprovalGuard'
+import AdminGuard from './components/AdminGuard'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import OnboardingPage from './pages/OnboardingPage'
@@ -10,6 +12,7 @@ import UploadPage from './pages/UploadPage'
 import JobsPage from './pages/JobsPage'
 import JobResultPage from './pages/JobResultPage'
 import ProfilePage from './pages/ProfilePage'
+import AdminPage from './pages/AdminPage'
 
 function App() {
   return (
@@ -24,23 +27,27 @@ function App() {
           />
           <Route
             path="/dashboard"
-            element={<ProtectedRoute><OnboardingGuard><DashboardPage /></OnboardingGuard></ProtectedRoute>}
+            element={<ProtectedRoute><OnboardingGuard><ApprovalGuard><DashboardPage /></ApprovalGuard></OnboardingGuard></ProtectedRoute>}
           />
           <Route
             path="/upload"
-            element={<ProtectedRoute><OnboardingGuard><UploadPage /></OnboardingGuard></ProtectedRoute>}
+            element={<ProtectedRoute><OnboardingGuard><ApprovalGuard><UploadPage /></ApprovalGuard></OnboardingGuard></ProtectedRoute>}
           />
           <Route
             path="/jobs"
-            element={<ProtectedRoute><OnboardingGuard><JobsPage /></OnboardingGuard></ProtectedRoute>}
+            element={<ProtectedRoute><OnboardingGuard><ApprovalGuard><JobsPage /></ApprovalGuard></OnboardingGuard></ProtectedRoute>}
           />
           <Route
             path="/jobs/:id"
-            element={<ProtectedRoute><OnboardingGuard><JobResultPage /></OnboardingGuard></ProtectedRoute>}
+            element={<ProtectedRoute><OnboardingGuard><ApprovalGuard><JobResultPage /></ApprovalGuard></OnboardingGuard></ProtectedRoute>}
           />
           <Route
             path="/profile"
-            element={<ProtectedRoute><OnboardingGuard><ProfilePage /></OnboardingGuard></ProtectedRoute>}
+            element={<ProtectedRoute><OnboardingGuard><ApprovalGuard><ProfilePage /></ApprovalGuard></OnboardingGuard></ProtectedRoute>}
+          />
+          <Route
+            path="/admin"
+            element={<ProtectedRoute><AdminGuard><AdminPage /></AdminGuard></ProtectedRoute>}
           />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>

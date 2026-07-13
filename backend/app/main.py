@@ -1,11 +1,21 @@
+import logging
+import os
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import inspect
 from .database import Base, engine, SessionLocal
 from . import models
+from .auth import hash_password
 from .algorithms import REGISTRY
-from .routers import auth, images, algorithms, jobs, profile
+from .routers import admin, auth, images, algorithms, jobs, profile
+
+# Surface app-level INFO (admin seed, stubbed approval emails, job failures);
+# uvicorn only configures its own loggers, leaving ours at the default WARNING.
+logging.basicConfig(level=logging.INFO)
+
+logger = logging.getLogger(__name__)
 
 
 def verify_schema():
@@ -58,6 +68,30 @@ def sync_algorithms(db):
     db.commit()
 
 
+def seed_admin(db):
+    """Ensure a superuser exists so someone can approve new sign-ups.
+
+    Credentials come from ADMIN_EMAIL / ADMIN_PASSWORD env vars, defaulting to the
+    prototype superuser. The admin is pre-approved and skips onboarding.
+    ponytail: default password is fine for a local prototype; set the env vars
+    for any shared/deployed instance."""
+    email = os.getenv("ADMIN_EMAIL", "satvik.kaul@torontomu.ca")
+    password = os.getenv("ADMIN_PASSWORD", "test12345")
+    if db.query(models.User).filter(models.User.email == email).first():
+        return
+    db.add(models.User(
+        full_name="Administrator",
+        email=email,
+        hashed_password=hash_password(password),
+        is_admin=True,
+        is_approved=True,
+        approved_at=datetime.now(timezone.utc),
+        onboarding_completed=True,
+    ))
+    db.commit()
+    logger.info("Seeded admin user %s", email)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
@@ -65,6 +99,7 @@ async def lifespan(app: FastAPI):
     db = SessionLocal()
     try:
         sync_algorithms(db)
+        seed_admin(db)
     finally:
         db.close()
     yield
@@ -85,6 +120,7 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(admin.router)
 app.include_router(images.router)
 app.include_router(algorithms.router)
 app.include_router(jobs.router)

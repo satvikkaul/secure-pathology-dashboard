@@ -59,9 +59,28 @@ class ProfileOut(BaseModel):
     intended_use: Optional[str] = None
     onboarding_completed: bool
     org_fields_locked: bool
+    is_approved: bool
+    is_admin: bool
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+# ── Admin approval gate (Phase 2C) ───────────────────────────────────────────
+class PendingUser(BaseModel):
+    id: int
+    full_name: str
+    email: str
+    role: Optional[str] = None
+    organization_name: Optional[str] = None
+    is_approved: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class ApproveRequest(BaseModel):
+    email: EmailStr
 
 
 # Shared org-context fields. The lock covers exactly these; `role` (below) is

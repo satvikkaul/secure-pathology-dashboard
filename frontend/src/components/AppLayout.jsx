@@ -10,7 +10,7 @@ function getInitials(fullName) {
 }
 
 function AppLayout({ children, pageTitle, pageSub }) {
-  const { user, logout } = useAuth()
+  const { user, logout, isAdmin } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -94,6 +94,16 @@ function AppLayout({ children, pageTitle, pageSub }) {
               <span className="sb-icon">◎</span>
               <span className="sb-nav-label">My Profile</span>
             </Link>
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className={`sb-nav-link${path === '/admin' ? ' sb-nav-link--active' : ''}`}
+                onClick={closeMobileSidebar}
+              >
+                <span className="sb-icon">✓</span>
+                <span className="sb-nav-label">Admin — Approvals</span>
+              </Link>
+            )}
           </nav>
         </div>
 

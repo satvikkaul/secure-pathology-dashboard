@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from .. import models, schemas, storage
-from ..dependencies import get_current_user, get_db
+from ..dependencies import get_approved_user, get_db
 from ..algorithms import REGISTRY
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/jobs", tags=["jobs"])
 def submit_job(
     payload: schemas.JobCreate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_approved_user),
 ):
     image = (
         db.query(models.Image)
@@ -69,7 +69,7 @@ def submit_job(
 @router.get("/", response_model=list[schemas.JobOut])
 def list_jobs(
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_approved_user),
 ):
     return (
         db.query(models.AlgorithmJob)
@@ -83,7 +83,7 @@ def list_jobs(
 def get_job(
     job_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_approved_user),
 ):
     job = (
         db.query(models.AlgorithmJob)

@@ -23,6 +23,12 @@ class User(Base):
     onboarding_completed = Column(Boolean, default=False, nullable=False)
     org_fields_locked = Column(Boolean, default=False, nullable=False)
 
+    # Admin-approval gate (Phase 2C). New users are locked out of the dashboard
+    # until an admin approves them; is_admin flags the superuser(s) who can approve.
+    is_approved = Column(Boolean, default=False, nullable=False)
+    approved_at = Column(DateTime, nullable=True)
+    is_admin = Column(Boolean, default=False, nullable=False)
+
     images = relationship("Image", back_populates="owner")
     jobs = relationship("AlgorithmJob", back_populates="owner")
 
