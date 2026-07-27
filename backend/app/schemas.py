@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Literal, Optional
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
 
 class UserCreate(BaseModel):
@@ -59,28 +59,47 @@ class ProfileOut(BaseModel):
     intended_use: Optional[str] = None
     onboarding_completed: bool
     org_fields_locked: bool
-    is_approved: bool
+    status: str
+    decision_reason: Optional[str] = None
     is_admin: bool
     created_at: datetime
 
     model_config = {"from_attributes": True}
 
 
-# ── Admin approval gate (Phase 2C) ───────────────────────────────────────────
-class PendingUser(BaseModel):
+# ── Admin decision workflow (Phase 2C/2D) ────────────────────────────────────
+class AdminUser(BaseModel):
     id: int
     full_name: str
     email: str
     role: Optional[str] = None
+    # The organisation/intended-use fields are what an approval decision turns
+    # on, so the admin list carries them rather than making the reviewer guess.
     organization_name: Optional[str] = None
-    is_approved: bool
+    department: Optional[str] = None
+    employee_id: Optional[str] = None
+    intended_use: Optional[str] = None
+    onboarding_completed: bool
+    status: str
+    decision_reason: Optional[str] = None
+    decided_at: Optional[datetime] = None
     created_at: datetime
 
     model_config = {"from_attributes": True}
 
 
-class ApproveRequest(BaseModel):
+class DecisionRequest(BaseModel):
     email: EmailStr
+    decision: Literal["approved", "declined"]
+    reason: Optional[str] = Field(default=None, max_length=1000)
+
+    @model_validator(mode="after")
+    def reason_required_to_decline(self):
+        # The reason is the only thing that tells the applicant what to fix
+        # before re-applying, so a decline without one is rejected outright.
+        if self.decision == "declined" and not (self.reason or "").strip():
+            raise ValueError("A reason is required when declining an account.")
+        return self
 
 
 # Shared org-context fields. The lock covers exactly these; `role` (below) is

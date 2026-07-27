@@ -18,7 +18,10 @@ export function AuthProvider({ children }) {
 
   // Derived, never mirrored in state, so it can't desync from the loaded profile.
   const onboardingCompleted = profile?.onboarding_completed ?? false
-  const isApproved = profile?.is_approved ?? false
+  const accountStatus = profile?.status ?? 'pending'
+  const decisionReason = profile?.decision_reason ?? null
+  const isApproved = accountStatus === 'approved'
+  const isDeclined = accountStatus === 'declined'
   const isAdmin = profile?.is_admin ?? false
 
   // getMe() success = valid token. getProfile() is fetched separately: a
@@ -100,7 +103,10 @@ export function AuthProvider({ children }) {
         isAuthenticated: !!user,
         isLoading,
         onboardingCompleted,
+        accountStatus,
+        decisionReason,
         isApproved,
+        isDeclined,
         isAdmin,
         justOnboarded,
         login,

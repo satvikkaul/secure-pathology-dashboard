@@ -27,11 +27,13 @@ def login(payload: schemas.UserLogin, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.email == payload.email).first()
     if not user or not verify_password(payload.password, user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    # Refuse sign-in once the user has finished onboarding but isn't approved:
+    # Refuse sign-in once the user has finished onboarding but is still pending:
     # there's nothing left for them to do but wait, so block here and show the
-    # message on the login page. A not-yet-onboarded user is still let in so they
-    # can complete onboarding (which is what the admin approves them on).
-    if user.onboarding_completed and not user.is_approved:
+    # message on the login page. Two deliberate exceptions, both because the user
+    # has something actionable to do inside the app:
+    #   - not yet onboarded → let in to complete onboarding (what they're judged on)
+    #   - declined → let in to read the reason and re-apply
+    if user.onboarding_completed and user.status == models.STATUS_PENDING:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Your account is awaiting administrator approval. Please contact the administrator.",

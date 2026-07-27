@@ -37,3 +37,6 @@ Thumbs.db
 # Local docs and assistant/editor config
 docs/
 .claude/
+CLAUDE.md
+PRODUCT.md
+.impeccable/

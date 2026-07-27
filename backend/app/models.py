@@ -3,6 +3,13 @@ from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, T
 from sqlalchemy.orm import relationship
 from .database import Base
 
+# Account decision states (Phase 2D). One column holds all three: an admin can
+# move a user between them in either direction, and a boolean plus timestamps
+# would let the same fact be recorded in two places and drift.
+STATUS_PENDING = "pending"
+STATUS_APPROVED = "approved"
+STATUS_DECLINED = "declined"
+
 
 class User(Base):
     __tablename__ = "users"
@@ -23,10 +30,15 @@ class User(Base):
     onboarding_completed = Column(Boolean, default=False, nullable=False)
     org_fields_locked = Column(Boolean, default=False, nullable=False)
 
-    # Admin-approval gate (Phase 2C). New users are locked out of the dashboard
-    # until an admin approves them; is_admin flags the superuser(s) who can approve.
-    is_approved = Column(Boolean, default=False, nullable=False)
-    approved_at = Column(DateTime, nullable=True)
+    # Admin decision gate (Phase 2C/2D). New users are locked out of the dashboard
+    # until an admin approves them; is_admin flags the superuser(s) who decide.
+    # decision_reason holds the reason for the *most recent* decision only — it is
+    # shown to the user and emailed to them.
+    # ponytail: no per-decision history table; add one if the admin ever needs to
+    # see why a user was declined on an earlier round.
+    status = Column(String, default=STATUS_PENDING, nullable=False)
+    decision_reason = Column(String, nullable=True)
+    decided_at = Column(DateTime, nullable=True)
     is_admin = Column(Boolean, default=False, nullable=False)
 
     images = relationship("Image", back_populates="owner")

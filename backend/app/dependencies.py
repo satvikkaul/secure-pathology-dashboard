@@ -40,8 +40,16 @@ def get_approved_user(
 ) -> models.User:
     """Gate every dashboard/data endpoint. A valid token is not enough — the
     account must be approved by an admin. Frontend hiding is not sufficient
-    (see ASSUMPTIONS security #2); this is the server-side enforcement."""
-    if not current_user.is_approved:
+    (see ASSUMPTIONS security #2); this is the server-side enforcement.
+
+    Checked per request, so revoking an approval takes effect on the user's very
+    next call without having to invalidate their token."""
+    if current_user.status == models.STATUS_DECLINED:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Your account request was declined. Please review the reason and re-apply.",
+        )
+    if current_user.status != models.STATUS_APPROVED:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Your account is pending administrator approval. Please contact the administrator.",

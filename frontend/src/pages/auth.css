@@ -63,6 +63,14 @@
   margin-bottom: 16px;
 }
 
+/* A decision that went against the reader is not a success and not a system
+   error. Neutral, so the green success banner is never used to say "declined". */
+.auth-banner--neutral {
+  background: var(--c-surface-lo);
+  color: var(--c-text-hi);
+  border-color: var(--c-border-mid);
+}
+
 .auth-error {
   color: var(--c-error);
   background: var(--c-error-bg);

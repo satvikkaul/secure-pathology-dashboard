@@ -101,7 +101,7 @@ function AppLayout({ children, pageTitle, pageSub }) {
                 onClick={closeMobileSidebar}
               >
                 <span className="sb-icon">✓</span>
-                <span className="sb-nav-label">Admin — Approvals</span>
+                <span className="sb-nav-label">Admin — Users</span>
               </Link>
             )}
           </nav>

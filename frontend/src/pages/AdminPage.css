@@ -1,0 +1,363 @@
+/* Admin user list. Follows the shell conventions in DashboardPage.css: the card
+   supplies the frame, its children supply the padding (18px horizontal gutter),
+   rows separate with a hairline and the last one drops it. */
+
+/* ── Toolbar ──────────────────────────────────────────────────────────────── */
+.ad-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.ad-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  min-height: 32px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-mid);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.ad-filter:hover {
+  background: var(--c-surface-lo);
+}
+
+.ad-filter[aria-pressed='true'] {
+  background: var(--c-navy);
+  border-color: var(--c-navy);
+  color: #fff;
+}
+
+/* Count sits inside the pill as a quieter companion to the label, so the pair
+   reads as one control rather than two competing numbers. */
+.ad-filter-count {
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.65;
+}
+
+/* ── Rows ─────────────────────────────────────────────────────────────────── */
+.ad-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ad-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.ad-row:last-child {
+  border-bottom: none;
+}
+
+.ad-row-main {
+  min-width: 0;
+  flex: 1 1 20rem;
+}
+
+/* Name and status are one unit — tight gap, shared baseline. */
+.ad-name-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 3px;
+}
+
+.ad-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-text-hi);
+  letter-spacing: -0.2px;
+}
+
+/* The email, not the display name, is what identifies an account — two people
+   can share a name, and the admin is matching a person to a row. It reads at
+   full strength; the softer organisation line sits below it. */
+.ad-email {
+  display: block;
+  font-size: 13px;
+  color: var(--c-text-hi);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ad-meta {
+  font-size: 12.5px;
+  color: var(--c-text-lo);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ad-meta-flag {
+  color: var(--c-warning);
+  font-weight: 600;
+}
+
+/* Intended use is the field an approval decision turns on, and the reason is
+   what a reinstatement turns on. Both are set off by a hairline and a label
+   rather than a filled box: a row of tinted slabs would put the most visual
+   weight on resolved accounts, which are the ones needing no action. */
+.ad-context,
+.ad-reason {
+  margin-top: 8px;
+  padding-left: 11px;
+  border-left: 1px solid var(--c-border-mid);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--c-text);
+  max-width: 68ch;
+}
+
+.ad-reason {
+  border-left-color: rgba(186, 26, 26, 0.5);
+  color: #8f2020;
+}
+
+.ad-context-label,
+.ad-reason-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--c-text-lo);
+  margin-bottom: 1px;
+}
+
+.ad-reason .ad-reason-label {
+  color: #a03a37;
+}
+
+/* ── Actions ──────────────────────────────────────────────────────────────── */
+.ad-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ad-btn {
+  padding: 8px 14px;
+  min-height: 34px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+/* Neutral rather than a translucent tint, so a disabled destructive button
+   never reads as a paler live one. */
+.ad-btn:disabled {
+  background: var(--c-surface-lo);
+  border-color: var(--c-border);
+  color: var(--c-text-lo);
+  cursor: default;
+}
+
+.ad-btn--primary {
+  background: var(--c-navy);
+  border: 1px solid var(--c-navy);
+  color: #fff;
+}
+
+.ad-btn--primary:hover:not(:disabled) {
+  background: var(--c-navy-hover);
+  border-color: var(--c-navy-hover);
+}
+
+.ad-btn--quiet {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-mid);
+  color: var(--c-text);
+}
+
+.ad-btn--quiet:hover:not(:disabled) {
+  background: var(--c-surface-lo);
+}
+
+/* Destructive intent shows on hover and in the dialog, not at rest — a list of
+   people should not read as a row of red buttons. */
+.ad-btn--danger:hover:not(:disabled) {
+  background: var(--c-error-bg);
+  border-color: rgba(186, 26, 26, 0.45);
+  color: #8f1414;
+}
+
+.ad-btn--solid-danger {
+  background: var(--c-error);
+  border: 1px solid var(--c-error);
+  color: #fff;
+}
+
+.ad-btn--solid-danger:hover:not(:disabled) {
+  background: #9c1616;
+  border-color: #9c1616;
+}
+
+/* ── Empty + loading ──────────────────────────────────────────────────────── */
+.ad-empty {
+  padding: 44px 18px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--c-text-lo);
+}
+
+.ad-scoped-error {
+  margin: 16px 18px 0;
+}
+
+/* ── Decision dialog ──────────────────────────────────────────────────────── */
+.ad-dialog {
+  padding: 0;
+  width: min(32rem, calc(100vw - 32px));
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  box-shadow: 0 18px 48px rgba(30, 41, 59, 0.22);
+}
+
+.ad-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.ad-dialog[open] {
+  animation: ad-dialog-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes ad-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ad-dialog[open] {
+    animation: none;
+  }
+}
+
+.ad-dialog-form {
+  padding: 22px;
+}
+
+.ad-dialog-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--c-text-hi);
+  letter-spacing: -0.2px;
+  margin-bottom: 6px;
+}
+
+.ad-dialog-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--c-text);
+  margin-bottom: 18px;
+}
+
+.ad-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text-hi);
+  margin-bottom: 6px;
+}
+
+.ad-label-opt {
+  font-weight: 400;
+  color: var(--c-text-lo);
+}
+
+.ad-textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--c-text-hi);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-mid);
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.ad-textarea::placeholder {
+  color: var(--c-text-lo);
+}
+
+.ad-hint {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--c-text-lo);
+  margin-top: 6px;
+}
+
+.ad-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+/* ── Focus ────────────────────────────────────────────────────────────────── */
+.ad-filter:focus-visible,
+.ad-btn:focus-visible,
+.ad-textarea:focus-visible {
+  outline: 2px solid var(--c-navy);
+  outline-offset: 2px;
+}
+
+.ad-textarea:focus {
+  border-color: var(--c-navy);
+  box-shadow: 0 0 0 3px var(--c-focus);
+  outline: none;
+}
+
+/* ── Narrow ───────────────────────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .ad-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  /* The 20rem basis is a *width* hint for the row layout; once the row stacks it
+     would be read as a minimum height and blow a 320px hole under every person. */
+  .ad-row-main {
+    flex: 0 1 auto;
+  }
+
+  .ad-actions {
+    width: 100%;
+  }
+
+  .ad-btn {
+    flex: 1;
+  }
+}

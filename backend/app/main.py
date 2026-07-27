@@ -84,8 +84,8 @@ def seed_admin(db):
         email=email,
         hashed_password=hash_password(password),
         is_admin=True,
-        is_approved=True,
-        approved_at=datetime.now(timezone.utc),
+        status=models.STATUS_APPROVED,
+        decided_at=datetime.now(timezone.utc),
         onboarding_completed=True,
     ))
     db.commit()

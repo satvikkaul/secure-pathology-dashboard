@@ -64,3 +64,29 @@ def lock_org(
     db.commit()
     db.refresh(current_user)
     return current_user
+
+
+@router.post("/me/reapply", response_model=schemas.ProfileOut)
+def reapply(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Put a declined account back in the pending queue.
+
+    The decline already unlocked their org fields, so by this point they have had
+    the chance to fix whatever the reason named. Clearing the reason keeps the
+    wall from showing a stale decline while they wait on the new decision.
+    ponytail: no cooldown or attempt limit — add one if re-apply loops become a
+    nuisance with more than a handful of users.
+    """
+    if current_user.status != models.STATUS_DECLINED:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Only a declined account can be re-applied.",
+        )
+    current_user.status = models.STATUS_PENDING
+    current_user.decision_reason = None
+    current_user.decided_at = None
+    db.commit()
+    db.refresh(current_user)
+    return current_user
