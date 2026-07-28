@@ -1,17 +1,24 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { login as apiLogin } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
 import './auth.css'
 
 function LoginPage() {
-  const { login } = useAuth()
+  const { login, isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState(null)
+
+  // Reverse guard: an already-signed-in user has no business on /login (e.g.
+  // arriving here via the browser Back button). Wait for the session check
+  // before deciding, mirroring ProtectedRoute, then bounce to the dashboard;
+  // the guards there route on to onboarding or the approval wall as needed.
+  if (isLoading) return null
+  if (isAuthenticated) return <Navigate to="/dashboard" replace />
 
   async function handleSubmit(e) {
     e.preventDefault()
